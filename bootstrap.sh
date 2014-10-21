@@ -15,10 +15,10 @@ LOG_FILE=/tmp/${LXC_NAME}.log
 export LC_ALL=en_US.UTF-8
 
 info() {
-  >&2 echo "$1"
+  >&2 echo -e "\e[32m** \e[0m$1"
 }
 
-egrep "DISTRIB_CODENAME=(utopic|trusty|precise)" /etc/lsb-release || {
+egrep -q "DISTRIB_CODENAME=(utopic|trusty|precise)" /etc/lsb-release || {
   info "Ubuntu Precise and Trusty are the only releases supported."
   exit 1
 }
@@ -51,5 +51,7 @@ until [ $n -ge 5 ]; do
 done
 mkdir $LXC_ROOTFS/$LXC_NAME
 cp -r * $LXC_ROOTFS/$LXC_NAME
-info "Proceeding to install. Run 'tail -f $LOG_FILE' to follow progress."
+info "Proceeding to install"
+info "Run 'tail -f $LOG_FILE' to follow progress."
+info "Error messages go to $LOG_FILE.errors."
 lxc-attach -n $LXC_NAME bash /$LXC_NAME/install.sh 2> $LOG_FILE.errors

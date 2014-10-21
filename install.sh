@@ -42,7 +42,7 @@ $BASE_PATH/populatedb.sh
 # KEYSTONE
 #
 info "Setting up keystone"
-cp configs/keystone/* /etc/keystone/
+cp $BASE_PATH/configs/keystone/* /etc/keystone/
 rm -f /var/lib/keystone/keystone.db
 service keystone restart
 keystone-manage db_sync
@@ -59,7 +59,7 @@ keystone user-list
 #
 
 info "Setting up glance"
-cp configs/glance/* /etc/glance/
+cp $BASE_PATH/configs/glance/* /etc/glance/
 rm -f /var/lib/glance/glance.sqlite
 service glance-api restart; service glance-registry restart
 mysql -u root -e "ALTER TABLE glance.migrate_version CONVERT TO CHARACTER SET 'utf8'"
@@ -71,11 +71,11 @@ glance image-list
 # Nova
 #
 info "Setting up Nova"
-cp configs/libvirt/* /etc/libvirt/
+cp $BASE_PATH/configs/libvirt/* /etc/libvirt/
 virsh net-destroy default
 virsh net-undefine default
-cp configs/default/* /etc/default/
-cp configs/nova/* /etc/nova/
+cp $BASE_PATH/configs/default/* /etc/default/
+cp $BASE_PATH/configs/nova/* /etc/nova/
 service dbus restart && service libvirt-bin restart
 for f in /etc/init.d/nova-*; do $f restart; done
 rm -f /var/lib/nova/nova.sqlite

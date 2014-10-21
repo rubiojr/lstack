@@ -12,6 +12,7 @@ BASE_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 LXC_NAME=icehouse-lxc
 LXC_ROOTFS=/var/lib/lxc/$LXC_NAME/rootfs
 LOG_FILE=/tmp/${LXC_NAME}.log
+UBUNTU_MIRROR=${UBUNTU_MIRROR:-archive.ubuntu.com}
 export LC_ALL=en_US.UTF-8
 
 info() {
@@ -38,7 +39,7 @@ modprobe nbd
 modprobe scsi_transport_iscsi
 
 info "Creating the LXC container"
-lxc-create -n $LXC_NAME -t ubuntu -- -r precise
+lxc-create -n $LXC_NAME -t ubuntu -- -r precise --mirror http://$UBUNTU_MIRROR/ubuntu
 lxc-start -n $LXC_NAME -d
 
 info "Waiting for the container to get an IP..."

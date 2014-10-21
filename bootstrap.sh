@@ -46,10 +46,10 @@ lxc-start -n $LXC_NAME -d
 info "Waiting for the container to get an IP..."
 n=0
 until [ $n -ge 5 ]; do
+  sleep 5
   IP=$(lxc-ls --fancy icehouse-lxc | tail -n1 | awk '{print $3}')
   [ -n "$IP" ] && break  # substitute your command here
   n=$[$n+1]
-  sleep 5
 done
 echo "lxc.cgroup.devices.allow = c 10:200 rwm" >> /var/lib/lxc/$LXC_NAME/config
 mkdir $LXC_ROOTFS/$LXC_NAME

@@ -33,7 +33,9 @@ apt-get install -y python-mysqldb mysql-server rabbitmq-server \
                    nova-novncproxy nova-doc nova-conductor \
                    nova-compute-qemu cinder-api cinder-scheduler \
                    cinder-volume openstack-dashboard memcached nova-network \
-                   nova-api cpu-checker qemu ebtables
+                   nova-api cpu-checker qemu ebtables python-guestfs
+
+update-guestfs-appliance
 
 info "Populating the database"
 $BASE_PATH/populatedb.sh

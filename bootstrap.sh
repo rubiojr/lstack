@@ -37,6 +37,7 @@ fi
 info "Loading required kernel modules"
 modprobe nbd
 modprobe scsi_transport_iscsi
+modprobe ebtables
 
 info "Creating the LXC container"
 lxc-create -n $LXC_NAME -t ubuntu -- -r precise --mirror http://$UBUNTU_MIRROR/ubuntu

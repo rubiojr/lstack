@@ -54,4 +54,5 @@ cp -r * $LXC_ROOTFS/$LXC_NAME
 info "Proceeding to install"
 info "Run 'tail -f $LOG_FILE' to follow progress."
 info "Error messages go to $LOG_FILE.errors."
-lxc-attach -n $LXC_NAME bash /$LXC_NAME/install.sh 2> $LOG_FILE.errors
+time lxc-attach -n $LXC_NAME bash /$LXC_NAME/install.sh 2> $LOG_FILE.errors
+info "Done! "

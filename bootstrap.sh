@@ -18,7 +18,7 @@ info() {
   >&2 echo -e "\e[32m** \e[0m$1"
 }
 
-egrep -q "DISTRIB_CODENAME=(utopic|trusty|precise)" /etc/lsb-release || {
+egrep -q "DISTRIB_CODENAME=(utopic|trusty)" /etc/lsb-release || {
   info "Ubuntu Precise and Trusty are the only releases supported."
   exit 1
 }

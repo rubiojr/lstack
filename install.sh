@@ -69,6 +69,8 @@ glance image-list
 # Nova
 #
 info "Setting up Nova"
+mkdir /dev/net
+mknod /dev/net/tun c 10 200
 cp $BASE_PATH/configs/libvirt/* /etc/libvirt/
 virsh net-destroy default
 virsh net-undefine default
@@ -78,6 +80,7 @@ service dbus restart && service libvirt-bin restart
 for f in /etc/init.d/nova-*; do $f restart; done
 rm -f /var/lib/nova/nova.sqlite
 nova-manage db sync
+for f in /etc/init.d/nova-*; do $f restart; done
 nova-manage --config-file /etc/nova/nova.conf network create private 10.0.254.0/24 1 256
 
 info "Creating a cirros 0.3 instance. user: cirros, password: cubswin:)"

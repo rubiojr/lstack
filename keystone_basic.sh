@@ -14,6 +14,7 @@
 #
 set -e
 
+HOST_IP=$(ifconfig eth0 | grep "inet addr" | awk '{ print substr($2,6) }')
 ADMIN_PASSWORD=${ADMIN_PASSWORD:-Seguridad101}
 SERVICE_PASSWORD=${SERVICE_PASSWORD:-Seguridad101}
 export SERVICE_TOKEN="ADMIN"

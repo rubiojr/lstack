@@ -14,6 +14,7 @@
 #
 
 # Host address
+HOST_IP=$(ifconfig eth0 | grep "inet addr" | awk '{ print substr($2,6) }')
 EXT_HOST_IP=$HOST_IP
 
 # MySQL definitions

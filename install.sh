@@ -6,7 +6,6 @@ info() {
 }
 
 BASE_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-export HOST_IP=$(ifconfig eth0 | grep "inet addr" | awk '{ print substr($2,6) }')
 export DEBIAN_FRONTEND=noninteractive
 
 info "Enabling icehouse cloud-archive repo"
@@ -62,7 +61,6 @@ info "Setting up glance"
 cp $BASE_PATH/configs/glance/* /etc/glance/
 rm -f /var/lib/glance/glance.sqlite
 service glance-api restart; service glance-registry restart
-mysql -u root -e "ALTER TABLE glance.migrate_version CONVERT TO CHARACTER SET 'utf8'"
 glance-manage db_sync
 glance image-create --name cirros0.3 --is-public true --container-format bare --disk-format qcow2 --location https://launchpad.net/cirros/trunk/0.3.0/+download/cirros-0.3.0-x86_64-disk.img
 glance image-list

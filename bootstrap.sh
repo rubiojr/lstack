@@ -51,6 +51,11 @@ fi
 # /dev/net/tun support
 lxc_config_set $LXC_NAME "lxc.cgroup.devices.allow = c 10:200 rwm"
 
+# /dev/loop* for loop mounting
+lxc_config_set $LXC_NAME "lxc.cgroup.devices.allow = b 7:* rwm"
+lxc_config_set $LXC_NAME "lxc.cgroup.devices.allow = c 10:237 rwm"
+
+
 lxc-start -n $LXC_NAME -d
 
 info "Waiting for the container to get an IP..."

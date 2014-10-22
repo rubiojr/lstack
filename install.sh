@@ -97,5 +97,5 @@ for f in /etc/init.d/nova-*; do $f restart; done
 nova-manage --config-file /etc/nova/nova.conf network create private 10.0.254.0/24 1 256
 
 info "Creating a cirros 0.3 instance. user: cirros, password: cubswin:)"
-nova secgroup-add-rule default tcp 22 22 0.0.0.0/0
+nova secgroup-add-rule default tcp 1 65535 0.0.0.0/0
 nova boot --image cirros0.3 --flavor m1.tiny test

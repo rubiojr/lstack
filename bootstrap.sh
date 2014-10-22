@@ -18,7 +18,7 @@ export LC_ALL=en_US.UTF-8
 
 source $BASE_PATH/lib.sh
 
-if [ -z "$FORCE_UNSUPORTED_DISTRO" ]; then
+if [ -z "$FORCE_UNSUPPORTED_DISTRO" ]; then
   egrep -q "DISTRIB_CODENAME=(utopic|trusty)" /etc/lsb-release || {
     error "Ubuntu Precise and Trusty are the only releases supported."
     exit 1

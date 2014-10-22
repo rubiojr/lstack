@@ -65,6 +65,11 @@ kvm_ok? || sed -i "s/^virt_type.*/virt_type = qemu/" \
 info "Proceeding with the install"
 info "Run 'tail -f $LOG_FILE' to follow progress"
 info "Error messages go to $LOG_FILE.errors"
+
+cat > $LXC_ROOTFS/$LXC_NAME/metadata << EOH
+HYPERVISOR=$HYPERVISOR
+EOH
+
 lxc-attach -n $LXC_NAME bash /$LXC_NAME/install.sh 2> $LOG_FILE.errors
 
 info "Done!"

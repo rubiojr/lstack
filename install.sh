@@ -8,6 +8,9 @@ info() {
 BASE_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 export DEBIAN_FRONTEND=noninteractive
 
+source $BASE_PATH/metadata
+HYPERVISOR=${HYPERVISOR:-qemu}
+
 info "Enabling icehouse cloud-archive repo"
 apt-get update
 apt-get install -y python-software-properties
@@ -31,8 +34,8 @@ apt-get install -y python-mysqldb mysql-server rabbitmq-server \
                    libvirt-bin pm-utils nova-api \
                    nova-cert novnc nova-consoleauth nova-scheduler \
                    nova-novncproxy nova-doc nova-conductor \
-                   nova-compute-qemu cinder-api cinder-scheduler \
-                   cinder-volume openstack-dashboard memcached nova-network \
+                   nova-compute-$HYPERVISOR \
+                   openstack-dashboard memcached nova-network \
                    nova-api cpu-checker qemu ebtables python-guestfs
 
 update-guestfs-appliance
@@ -73,10 +76,13 @@ glance image-list
 info "Setting up Nova"
 mkdir /dev/net
 mknod /dev/net/tun c 10 200
-# KVM support
-mknod /dev/kvm c 10 232
-chmod g+rw /dev/kvm
-chgrp kvm /dev/kvm
+
+if [ "$HYPERVISOR" = "kvm" ]; then
+  # KVM support
+  mknod /dev/kvm c 10 232
+  chmod g+rw /dev/kvm
+  chgrp kvm /dev/kvm
+fi
 
 cp $BASE_PATH/configs/libvirt/* /etc/libvirt/
 virsh net-destroy default

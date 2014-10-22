@@ -23,7 +23,7 @@ if [ `whoami` != "root" ]; then
   exec sudo $BASE_PATH/$0 $@ > $LOG_FILE
 fi
 
-if [ -z "$FORCE_UNSUPPORTED_DISTRO" ]; then
+if ! [[ "$@" =~ '--force-unsupported' ]]; then
   egrep -q "DISTRIB_CODENAME=(utopic|trusty)" /etc/lsb-release || {
     error "Ubuntu Precise and Trusty are the only releases supported."
     exit 1

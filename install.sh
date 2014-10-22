@@ -73,6 +73,11 @@ glance image-list
 info "Setting up Nova"
 mkdir /dev/net
 mknod /dev/net/tun c 10 200
+# KVM support
+mknod /dev/kvm c 10 232
+chmod g+rw /dev/kvm
+chgrp kvm /dev/kvm
+
 cp $BASE_PATH/configs/libvirt/* /etc/libvirt/
 virsh net-destroy default
 virsh net-undefine default

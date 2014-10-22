@@ -7,6 +7,7 @@
 # Needs module scsi_transport_iscsi and nbd loaded in the host
 #
 set -e
+[ -n "$DEBUG" ] && set -x
 
 BASE_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 LXC_NAME=icehouse-lxc
@@ -15,24 +16,20 @@ LOG_FILE=/tmp/${LXC_NAME}.log
 UBUNTU_MIRROR=${UBUNTU_MIRROR:-archive.ubuntu.com}
 export LC_ALL=en_US.UTF-8
 
-info() {
-  >&2 echo -e "\e[32m** \e[0m$1"
-}
+source $BASE_PATH/lib.sh
 
 egrep -q "DISTRIB_CODENAME=(utopic|trusty)" /etc/lsb-release || {
   info "Ubuntu Precise and Trusty are the only releases supported."
   exit 1
 }
 
-[ -f /usr/bin/lxc-attach ] || {
-  info "LXC doesn't seem to be installed."
-  info "Run 'sudo apt-get install lxc' first."
-}
+need_pkg "lxc"
+need_pkg "sudo"
 
 if [ `whoami` != "root" ]; then
+  warn "Need to run as root, trying to sudo"
   exec sudo $BASE_PATH/$0 $@ > $LOG_FILE
 fi
-
 
 info "Loading required kernel modules"
 modprobe nbd
@@ -40,22 +37,32 @@ modprobe scsi_transport_iscsi
 modprobe ebtables
 
 info "Creating the LXC container"
-lxc-create -n $LXC_NAME -t ubuntu -- -r precise --mirror http://$UBUNTU_MIRROR/ubuntu
+quiet "lxc-create -n $LXC_NAME -t ubuntu -- -r precise --mirror http://$UBUNTU_MIRROR/ubuntu"
+if check_kvm_reqs; then
+  # /dev/kvm support
+  info "KVM acceleration available"
+  lxc_config_set $LXC_NAME "lxc.cgroup.devices.allow = c 10:232 rwm"
+else
+  warn "No KVM acceleration support detected, using QEMU (bad performance)."
+fi
+# /dev/net/tun support
+lxc_config_set $LXC_NAME "lxc.cgroup.devices.allow = c 10:200 rwm"
+
 lxc-start -n $LXC_NAME -d
 
 info "Waiting for the container to get an IP..."
-n=0
-until [ $n -ge 5 ]; do
-  sleep 5
-  IP=$(lxc-ls --fancy icehouse-lxc | tail -n1 | awk '{print $3}')
-  [ -n "$IP" ] && break  # substitute your command here
-  n=$[$n+1]
-done
-echo "lxc.cgroup.devices.allow = c 10:200 rwm" >> /var/lib/lxc/$LXC_NAME/config
+wait_for_container_ip $LXC_NAME
+
 mkdir $LXC_ROOTFS/$LXC_NAME
 cp -r * $LXC_ROOTFS/$LXC_NAME
+
+# Disable KVM support if not available
+kvm_ok? || sed -i "s/^virt_type.*/virt_type = qemu/" \
+  $LXC_ROOTFS/$LXC_NAME/configs/nova/nova*conf
+
 info "Proceeding with the install"
 info "Run 'tail -f $LOG_FILE' to follow progress"
 info "Error messages go to $LOG_FILE.errors"
 lxc-attach -n $LXC_NAME bash /$LXC_NAME/install.sh 2> $LOG_FILE.errors
+
 info "Done!"

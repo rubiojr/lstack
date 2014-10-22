@@ -18,10 +18,12 @@ export LC_ALL=en_US.UTF-8
 
 source $BASE_PATH/lib.sh
 
-egrep -q "DISTRIB_CODENAME=(utopic|trusty)" /etc/lsb-release || {
-  error "Ubuntu Precise and Trusty are the only releases supported."
-  exit 1
-}
+if [ -z "$FORCE_UNSUPORTED_DISTRO" ]; then
+  egrep -q "DISTRIB_CODENAME=(utopic|trusty)" /etc/lsb-release || {
+    error "Ubuntu Precise and Trusty are the only releases supported."
+    exit 1
+  }
+fi
 
 need_pkg "lxc"
 need_pkg "sudo"

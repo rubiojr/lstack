@@ -44,6 +44,7 @@ if check_kvm_reqs; then
   # /dev/kvm support
   info "KVM acceleration available"
   lxc_config_set $LXC_NAME "lxc.cgroup.devices.allow = c 10:232 rwm"
+  HYPERVISOR=kvm
 else
   warn "No KVM acceleration support detected, using QEMU (bad performance)."
 fi

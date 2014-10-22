@@ -31,9 +31,11 @@ apt-get install -y python-mysqldb mysql-server rabbitmq-server \
                    libvirt-bin pm-utils nova-api \
                    nova-cert novnc nova-consoleauth nova-scheduler \
                    nova-novncproxy nova-doc nova-conductor \
-                   nova-compute-qemu cinder-api cinder-scheduler \
-                   cinder-volume openstack-dashboard memcached nova-network \
-                   nova-api cpu-checker qemu ebtables python-guestfs
+                   nova-compute-qemu \
+                   openstack-dashboard memcached nova-network \
+                   nova-api cpu-checker qemu ebtables python-guestfs \
+                   cinder-api cinder-scheduler cinder-volume \
+                   iscsitarget open-iscsi iscsitarget-dkms
 
 update-guestfs-appliance
 

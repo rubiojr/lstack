@@ -5,7 +5,11 @@ info() {
 }
 
 warn() {
-  >&2 echo -e "\e[33m** WARN: \e[0m$1"
+  >&2 echo -e "\e[33m** \e[0mWARN: $1"
+}
+
+error() {
+  >&2 echo -e "\e[31m** \e[0mERROR: $1"
 }
 
 quiet() {

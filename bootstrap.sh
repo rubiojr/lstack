@@ -19,7 +19,7 @@ export LC_ALL=en_US.UTF-8
 source $BASE_PATH/lib.sh
 
 egrep -q "DISTRIB_CODENAME=(utopic|trusty)" /etc/lsb-release || {
-  info "Ubuntu Precise and Trusty are the only releases supported."
+  error "Ubuntu Precise and Trusty are the only releases supported."
   exit 1
 }
 
@@ -27,7 +27,7 @@ need_pkg "lxc"
 need_pkg "sudo"
 
 if [ `whoami` != "root" ]; then
-  warn "Need to run as root, trying to sudo"
+  warn "Need to run as root, trying sudo"
   exec sudo $BASE_PATH/$0 $@ > $LOG_FILE
 fi
 

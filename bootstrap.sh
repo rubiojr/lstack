@@ -33,7 +33,6 @@ fi
 need_pkg "lxc"
 need_pkg "sudo"
 
-
 info "Loading required kernel modules"
 modprobe nbd
 modprobe scsi_transport_iscsi

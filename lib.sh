@@ -16,8 +16,12 @@ quiet() {
   $1 > /dev/null
 }
 
+pkg_installed?(){
+  dpkg -l $1 | egrep "^ii\s+$1\s"
+}
+
 kvm_ok?() {
-  quiet "dpkg -s qemu-kvm" || return 1
+  pkg_installed? "qemu-kvm" || return 1
   local virt=$(egrep -m1 -w '^flags[[:blank:]]*:' /proc/cpuinfo | egrep -wo '(vmx|svm)') || true
   [[ "$virt" =~ ^vmx|svm$ ]] || return 1
   [ -e /dev/kvm ] || return 1
@@ -25,8 +29,8 @@ kvm_ok?() {
 
 check_kvm_reqs() {
   kvm_ok? || {
-    quiet "dpkg -s qemu-kvm" || warn "Missing the qemu-kvm package."
-    quiet "dpkg -s cpu-checker" || warn "Missing the cpu-checker package."
+    pkg_installed? "qemu-kvm" || warn "Missing the qemu-kvm package."
+    pkg_installed? "cpu-checker" || warn "Missing the cpu-checker package."
     kvm_ok? \
       || warn "KVM support not found. Is the kvm_intel (or kvm_amd) module loaded?"
     return 1
@@ -41,9 +45,9 @@ lxc_config_set() {
 }
 
 need_pkg() {
-  quiet "dpkg -s $1" || {
-    info "Package $1 doesn't seem to be installed."
-    info "Run 'sudo apt-get install $1' first."
+  pkg_installed? $1 || {
+    error "Package $1 doesn't seem to be installed."
+    error "Run 'sudo apt-get install $1' first."
     exit 1
   }
 }

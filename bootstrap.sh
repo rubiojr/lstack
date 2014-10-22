@@ -18,6 +18,11 @@ export LC_ALL=en_US.UTF-8
 
 source $BASE_PATH/lib.sh
 
+if [ `whoami` != "root" ]; then
+  warn "Need to run as root, trying sudo"
+  exec sudo $BASE_PATH/$0 $@ > $LOG_FILE
+fi
+
 if [ -z "$FORCE_UNSUPPORTED_DISTRO" ]; then
   egrep -q "DISTRIB_CODENAME=(utopic|trusty)" /etc/lsb-release || {
     error "Ubuntu Precise and Trusty are the only releases supported."
@@ -28,10 +33,6 @@ fi
 need_pkg "lxc"
 need_pkg "sudo"
 
-if [ `whoami` != "root" ]; then
-  warn "Need to run as root, trying sudo"
-  exec sudo $BASE_PATH/$0 $@ > $LOG_FILE
-fi
 
 info "Loading required kernel modules"
 modprobe nbd

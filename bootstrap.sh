@@ -32,11 +32,13 @@ fi
 
 need_pkg "lxc"
 need_pkg "sudo"
+need_pkg "iscsitarget-dkms"
 
 info "Loading required kernel modules"
 modprobe nbd
 modprobe scsi_transport_iscsi
 modprobe ebtables
+modprobe iscsi_trgt
 
 info "Creating the LXC container"
 quiet "lxc-create -n $LXC_NAME -t ubuntu -- -r precise --mirror http://$UBUNTU_MIRROR/ubuntu"
@@ -50,6 +52,11 @@ else
 fi
 # /dev/net/tun support
 lxc_config_set $LXC_NAME "lxc.cgroup.devices.allow = c 10:200 rwm"
+lxc_config_set $LXC_NAME "lxc.cgroup.devices.allow = b 7:* rwm"
+
+# lvm support inside the container
+lxc_config_set $LXC_NAME "lxc.cgroup.devices.allow = c 10:236 rwm"
+lxc_config_set $LXC_NAME "lxc.cgroup.devices.allow = b 252:* rwm"
 
 # /dev/loop* for loop mounting
 lxc_config_set $LXC_NAME "lxc.cgroup.devices.allow = b 7:* rwm"

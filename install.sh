@@ -36,7 +36,8 @@ apt-get install -y python-mysqldb mysql-server rabbitmq-server \
                    nova-novncproxy nova-doc nova-conductor \
                    nova-compute-$HYPERVISOR \
                    openstack-dashboard memcached nova-network \
-                   nova-api cpu-checker qemu ebtables python-guestfs
+                   nova-api cpu-checker qemu ebtables python-guestfs \
+                   cinder-api cinder-scheduler cinder-volume
 
 update-guestfs-appliance
 
@@ -69,6 +70,21 @@ service glance-api restart; service glance-registry restart
 glance-manage db_sync
 glance image-create --name cirros0.3 --is-public true --container-format bare --disk-format qcow2 --location https://launchpad.net/cirros/trunk/0.3.0/+download/cirros-0.3.0-x86_64-disk.img
 glance image-list
+
+info "Setting up Cinder"
+cp $BASE_PATH/configs/cinder/* /etc/cinder/
+rm /var/lib/cinder/cinder.sqlite
+cinder-manage db sync
+dd if=/dev/zero of=/cinder-volumes bs=1 count=0 seek=55G
+losetup /dev/loop6 /cinder-volumes
+pvcreate /dev/loop6
+vgcreate cinder-volumes /dev/loop6
+lvcreate --name disk1 --size 10G cinder-volumes
+lvcreate --name disk2 --size 10G cinder-volumes
+lvcreate --name disk3 --size 10G cinder-volumes
+lvcreate --name disk4 --size 10G cinder-volumes
+lvcreate --name disk5 --size 10G cinder-volumes
+cd /etc/init.d/; for i in $( ls cinder-* ); do sudo service $i restart; cd /root/; done
 
 #
 # Nova

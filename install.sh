@@ -37,8 +37,7 @@ apt-get install -y python-mysqldb mysql-server rabbitmq-server \
                    nova-compute-$HYPERVISOR \
                    openstack-dashboard memcached nova-network \
                    nova-api cpu-checker qemu ebtables python-guestfs \
-                   cinder-api cinder-scheduler cinder-volume \
-                   iscsitarget open-iscsi iscsitarget-dkms
+                   cinder-api cinder-scheduler cinder-volume
 
 update-guestfs-appliance
 
@@ -76,7 +75,7 @@ info "Setting up Cinder"
 cp $BASE_PATH/configs/cinder/* /etc/cinder/
 rm /var/lib/cinder/cinder.sqlite
 cinder-manage db sync
-dd if=/dev/zero of=/cinder-volumes bs=1 count=0 seek=50G
+dd if=/dev/zero of=/cinder-volumes bs=1 count=0 seek=55G
 losetup /dev/loop6 /cinder-volumes
 pvcreate /dev/loop6
 vgcreate cinder-volumes /dev/loop6

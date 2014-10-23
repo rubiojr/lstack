@@ -46,6 +46,7 @@ if check_kvm_reqs; then
   # /dev/kvm support
   info "KVM acceleration available"
   lxc_config_set $LXC_NAME "lxc.cgroup.devices.allow = c 10:232 rwm"
+  HYPERVISOR=kvm
 else
   warn "No KVM acceleration support detected, using QEMU (bad performance)."
 fi
@@ -56,6 +57,11 @@ lxc_config_set $LXC_NAME "lxc.cgroup.devices.allow = b 7:* rwm"
 # lvm support inside the container
 lxc_config_set $LXC_NAME "lxc.cgroup.devices.allow = c 10:236 rwm"
 lxc_config_set $LXC_NAME "lxc.cgroup.devices.allow = b 252:* rwm"
+
+# /dev/loop* for loop mounting
+lxc_config_set $LXC_NAME "lxc.cgroup.devices.allow = b 7:* rwm"
+lxc_config_set $LXC_NAME "lxc.cgroup.devices.allow = c 10:237 rwm"
+
 
 lxc-start -n $LXC_NAME -d
 
@@ -72,6 +78,11 @@ kvm_ok? || sed -i "s/^virt_type.*/virt_type = qemu/" \
 info "Proceeding with the install"
 info "Run 'tail -f $LOG_FILE' to follow progress"
 info "Error messages go to $LOG_FILE.errors"
+
+cat > $LXC_ROOTFS/$LXC_NAME/metadata << EOH
+HYPERVISOR=$HYPERVISOR
+EOH
+
 lxc-attach -n $LXC_NAME bash /$LXC_NAME/install.sh 2> $LOG_FILE.errors
 
 info "Done!"

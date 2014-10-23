@@ -72,6 +72,21 @@ glance-manage db_sync
 glance image-create --name cirros0.3 --is-public true --container-format bare --disk-format qcow2 --location https://launchpad.net/cirros/trunk/0.3.0/+download/cirros-0.3.0-x86_64-disk.img
 glance image-list
 
+info "Setting up Cinder"
+cp $BASE_PATH/configs/cinder/* /etc/cinder/
+rm /var/lib/cinder/cinder.sqlite
+cinder-manage db sync
+dd if=/dev/zero of=/cinder-volumes bs=1 count=0 seek=50G
+losetup /dev/loop6 /cinder-volumes
+pvcreate /dev/loop6
+vgcreate cinder-volumes /dev/loop6
+lvcreate --name disk1 --size 10G cinder-volumes
+lvcreate --name disk2 --size 10G cinder-volumes
+lvcreate --name disk3 --size 10G cinder-volumes
+lvcreate --name disk4 --size 10G cinder-volumes
+lvcreate --name disk5 --size 10G cinder-volumes
+cd /etc/init.d/; for i in $( ls cinder-* ); do sudo service $i restart; cd /root/; done
+
 #
 # Nova
 #

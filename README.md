@@ -1,6 +1,6 @@
 ![](/images/icehouse-lxc.png)
 
-Create OpenStack LXC containers
+Create OpenStack LXC containers.
 
 ```bash
 git clone https://github.com/rubiojr/lstack

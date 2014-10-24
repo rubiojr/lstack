@@ -115,10 +115,9 @@ if ! lxc-attach -n $LXC_NAME bash $BOOTSTRAP_CDIR/install/install.sh \
      2> $LOG_FILE.errors
 then
   error "Failed to bootstrap OpenStack"
-  error "Tailing the last 5 lines of $LOG_FILE.errors"
-  echo -e "\e[31m** \e[0mvvvv\n"
-  error ">>>>>"
-  >&2 tail -n5 $LOG_FILE.errors
+  error "Tailing the last 5 lines of $LOG_FILE.errors:\n\n"
+  >&2 tail -n5 $LOG_FILE.errors | \
+    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"
   exit 1
 fi
 

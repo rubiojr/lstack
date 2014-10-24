@@ -12,10 +12,10 @@ if [ `whoami` != "root" ]; then
 fi
 
 # If the container was not fully provisioned vgrename may not be there
-if cexe "lstack" "which vgremove"; then
+if cexe "lstack" "which vgremove > /dev/null"; then
   debug "Removing the LVM volume"
   # try to remove the volume group only if it's there
-  cexe "lstack" "vgdisplay cinder-volumes > /dev/null" && \
+  cexe "lstack" "vgdisplay cinder-volumes > /dev/null 2>&1" && \
     cexe "lstack" "vgremove -f cinder-volumes > /dev/null"
   debug "Cleanup the loop device"
   (losetup -a | grep -q loop6) && losetup -d /dev/loop6 || true

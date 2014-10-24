@@ -80,7 +80,7 @@ cexe() {
   }
 
   # lxc-attach doesn't work in precise by default
-  if lxc-attach -n "$cname" /bin/true; then
+  if lxc-attach -n "$cname" /bin/true 2>/dev/null; then
     lxc-attach -n "$cname" -- $@
   else
     warn "lxc-attach doesn't work here, trying SSH"

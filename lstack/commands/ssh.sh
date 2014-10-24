@@ -25,7 +25,7 @@ fi
 # The container will have multiple IPs because nova-network so we wanna
 # try them all till we find the one that is reachable from the host.
 for ip in $ips; do
-  su - $SUDO_USER -c "ssh -o StrictHostKeyChecking=no \
+  su - $SUDO_USER -c "ssh -q -o StrictHostKeyChecking=no \
       -o ConnectTimeout=2 \
       -o UserKnownHostsFile=/dev/null \
       -l root \

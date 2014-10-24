@@ -66,10 +66,12 @@ cp $BASE_PATH/../configs/glance/* /etc/glance/
 rm -f /var/lib/glance/glance.sqlite
 service glance-api restart; service glance-registry restart
 glance-manage db_sync
-curl https://launchpad.net/cirros/trunk/0.3.0/+download/cirros-0.3.0-x86_64-disk.img > /tmp/cirros-0.3.0.img || {
-  error "Could not download Cirros 0.3 image from Launchpad. Aborting."
+curl -L --retry 3 https://launchpad.net/cirros/trunk/0.3.0/+download/cirros-0.3.0-x86_64-disk.img -o /tmp/cirros-0.3.0.img
+md5=$(md5sum /tmp/cirros-0.3.0.img | awk '{print $1}')
+if [ "$md5" != "50bdc35edb03a38d91b1b071afb20a3c" ]; then
+  error "Error downloading Cirros 0.3.0 from Launchpad. Aborting."
   exit 1
-}
+fi
 glance image-create --name cirros0.3 --is-public true --container-format bare --disk-format qcow2 --file /tmp/cirros-0.3.0.img || {
   error "Could not create the image in glance"
   exit 1

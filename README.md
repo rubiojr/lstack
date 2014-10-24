@@ -1,17 +1,55 @@
 ![](/images/icehouse-lxc.png)
 
-Creates an Ubuntu Precise LXC container and installs OpenStack Icehouse on it.
+Create OpenStack LXC containers
 
 ```bash
-git clone https://github.com/rubiojr/lxc-icehouse
-./bootstrap.sh
+git clone https://github.com/rubiojr/lstack
+./lstack.sh bootstrap
 ```
 
-Notes:
+## Usage
+
+
+lstack has a built-in help:
+
+```
+$ ./lstack.sh --help
+Usage: lstack [options] [command]
+
+OPTIONS
+
+--help                Print help
+--version             Print version
+
+COMMANDS
+
+bootstrap             Bootstrap the OpenStack container
+info                  Print container info (lxc-info)
+ssh                   SSH into the container
+nova                  Run the nova command inside the container
+destroy               Destroy the container
+```
+
+To destroy the container:
+
+```
+$ ./lstack.sh destroy
+** Destroying the container...
+```
+
+To SSH to the container:
+
+```
+$ ./lstack.ssh ssh
+```
+
+## Notes
 
 * Ubuntu Trusty and Utopic are the only hosts tested right now.
-* Cinder and Neutron are not functional yet (and maybe never will? unknown.)
-* The Icehouse is on fire.
-* A fast download pipe (or an APT cache) and a speedy SSD should give you ~3 minutes of provisioning time.
+* Neutron is not supported right now. I'm using a flat network with nova-network.
+* Provisioning time usually takes between 3 and 10 minutes. A fast download pipe (or an APT cache) and a speedy SSD should do it in ~3 minutes.
+* Cinder is configured to use BlockDeviceDriver. More on this later.
 
-All the credit goes to https://github.com/fornyx/OpenStack-Havana-Install-Guide for such an excelent guide that helped me to tame the Icehouse beast.
+## Credits
+
+* https://github.com/fornyx/OpenStack-Havana-Install-Guide for such an excelent guide that helped me to tame the Icehouse beast.

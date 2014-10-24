@@ -30,7 +30,7 @@ for ip in $ips; do
       -o UserKnownHostsFile=/dev/null \
       -l root \
       -i ~/.config/lstack/sshkey \
-      $ip" || continue
+      $ip $@" || continue
   # We've found the IP
   break
 done

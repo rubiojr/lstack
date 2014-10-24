@@ -111,7 +111,15 @@ mkdir -p $LXC_ROOTFS/root/.ssh
 chmod 0700 $LXC_ROOTFS/root/.ssh
 cp $CONF_DIR/sshkey.pub $LXC_ROOTFS/root/.ssh/authorized_keys
 
-lxc-attach -n $LXC_NAME bash $BOOTSTRAP_CDIR/install/install.sh \
-  2> $LOG_FILE.errors || tail -n1 $LOG_FILE.errors
+if ! lxc-attach -n $LXC_NAME bash $BOOTSTRAP_CDIR/install/install.sh \
+     2> $LOG_FILE.errors
+then
+  error "Failed to bootstrap OpenStack"
+  error "Tailing the last 5 lines of $LOG_FILE.errors"
+  echo -e "\e[31m** \e[0mvvvv\n"
+  error ">>>>>"
+  >&2 tail -n5 $LOG_FILE.errors
+  exit 1
+fi
 
 info "Done!"

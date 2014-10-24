@@ -93,6 +93,6 @@ cexe() {
         -o UserKnownHostsFile=/dev/null \
         -l root \
         -i ~/.config/lstack/sshkey \
-        $ip
+        $ip $@
   fi
 }

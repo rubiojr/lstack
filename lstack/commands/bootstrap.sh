@@ -103,7 +103,7 @@ mkdir -p $LXC_ROOTFS/root/.ssh
 chmod 0700 $LXC_ROOTFS/root/.ssh
 cp $CONF_DIR/sshkey.pub $LXC_ROOTFS/root/.ssh/authorized_keys
 
-if ! lxc-attach -n $LXC_NAME bash $BOOTSTRAP_CDIR/install/install.sh \
+if ! cexe $LXC_NAME "bash $BOOTSTRAP_CDIR/install/install.sh" \
      2> $LOG_FILE.errors
 then
   error "Failed to bootstrap OpenStack"

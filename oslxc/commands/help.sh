@@ -17,3 +17,4 @@ echo
 columnize "bootstrap", "Bootstrap the OpenStack container"
 columnize "ssh",       "SSH into the container"
 columnize "nova",      "Run the nova command inside the container"
+columnize "destroy",   "Destroy the container"

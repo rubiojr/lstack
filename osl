@@ -18,6 +18,7 @@ fi
 source $BASE_PATH/oslxc/dispatch.sh
 
 oslxc_command_bootstrap() ( source $BASE_PATH/oslxc/commands/bootstrap.sh )
+oslxc_command_destroy() ( source $BASE_PATH/oslxc/commands/destroy.sh )
 oslxc_command_nova() ( source $BASE_PATH/oslxc/commands/nova.sh )
 oslxc_command_ssh() ( source $BASE_PATH/oslxc/commands/ssh.sh )
 oslxc_command_help () ( source $BASE_PATH/oslxc/commands/help.sh )

@@ -69,3 +69,30 @@ wait_for_container_ip() {
     n=$[$n+1]
   done
 }
+
+cexe() {
+  cname=$1
+  shift
+
+  lxc-ls --running -1 | grep "$cname" > /dev/null || {
+    error "Container '$cname' not runnig"
+    exit 1
+  }
+
+  # lxc-attach doesn't work in precise by default
+  if lxc-attach -n "$cname" /bin/true; then
+    lxc-attach -n "$cname" -- $@
+  else
+    warn "lxc-attach doesn't work here, trying SSH"
+    ip=$(lxc-info -i -n "$cname" | cut -d' ' -f2- | xargs | awk '{print $1}') || true
+    if [ -z "$ip" ]; then
+      error "Container IP not found"
+      exit 1
+    fi
+    ssh -o StrictHostKeyChecking=no \
+        -o UserKnownHostsFile=/dev/null \
+        -l root \
+        -i ~/.config/oslxc/sshkey \
+        $ip
+  fi
+}

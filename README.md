@@ -7,6 +7,16 @@ git clone https://github.com/rubiojr/lstack
 ./lstack.sh bootstrap
 ```
 
+## Description
+
+Creates an LXC container and installs OpenStack Icehouse from the Ubuntu Cloud Archive. Services currently supported:
+
+* Nova Compute (kvm)
+* Cinder (using BlockDeviceDriver)
+* Keystone
+* Nova Network (flat topology)
+* Glance
+
 ## Usage
 
 

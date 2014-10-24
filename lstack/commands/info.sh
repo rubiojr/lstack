@@ -11,5 +11,10 @@ if [ `whoami` != "root" ]; then
   exec sudo bash $CMD_PATH $@
 fi
 
+lxc-ls --running -1 | grep lstack > /dev/null || {
+  error "Container 'lstack' not runnig"
+  exit 1
+}
+
 info "Retrieving container info"
 lxc-info -n lstack

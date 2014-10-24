@@ -1,14 +1,12 @@
 #!/bin/bash
 set -e
 
-info() {
-  >&2 echo "$1"
-}
-
 BASE_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 export DEBIAN_FRONTEND=noninteractive
 
 source $BASE_PATH/../metadata
+source $BASE_PATH/../lib.sh
+
 HYPERVISOR=${HYPERVISOR:-qemu}
 
 info "Enabling icehouse cloud-archive repo"
@@ -67,7 +65,10 @@ cp $BASE_PATH/../configs/glance/* /etc/glance/
 rm -f /var/lib/glance/glance.sqlite
 service glance-api restart; service glance-registry restart
 glance-manage db_sync
-glance image-create --name cirros0.3 --is-public true --container-format bare --disk-format qcow2 --location https://launchpad.net/cirros/trunk/0.3.0/+download/cirros-0.3.0-x86_64-disk.img
+glance image-create --name cirros0.3 --is-public true --container-format bare --disk-format qcow2 --location https://launchpad.net/cirros/trunk/0.3.0/+download/cirros-0.3.0-x86_64-disk.iimg || {
+  error "Could not download Cirros 0.3 image from Launchpad. Aborting."
+  exit 1
+}
 glance image-list
 
 info "Setting up Cinder"

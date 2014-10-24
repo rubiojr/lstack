@@ -104,6 +104,7 @@ mkdir -p $LXC_ROOTFS/root/.ssh
 chmod 0700 $LXC_ROOTFS/root/.ssh
 cp $CONF_DIR/sshkey.pub $LXC_ROOTFS/root/.ssh/authorized_keys
 
-lxc-attach -n $LXC_NAME bash $BOOTSTRAP_CDIR/install/install.sh 2> $LOG_FILE.errors
+lxc-attach -n $LXC_NAME bash $BOOTSTRAP_CDIR/install/install.sh \
+  2> $LOG_FILE.errors || tail -n1 $LOG_FILE.errors
 
 info "Done!"

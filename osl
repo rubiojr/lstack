@@ -9,116 +9,21 @@
 set -e
 [ -n "$DEBUG" ] && set -x
 
-BASE_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-LXC_NAME=oslxc
-LXC_ROOTFS=/var/lib/lxc/$LXC_NAME/rootfs
-LOG_FILE=/tmp/${LXC_NAME}.log
-UBUNTU_MIRROR=${UBUNTU_MIRROR:-archive.ubuntu.com}
 INSTALL_DIR=/usr/share/oslxc
-export LC_ALL=en_US.UTF-8
-BOOTSTRAP_DIR=$LXC_ROOTFS/root/oslxc
-BOOTSTRAP_CDIR=/root/oslxc/
-CONF_DIR=$HOME/.config/oslxc
-
+BASE_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 if ! [ -f "$BASE_PATH/oslxc/lib.sh" ]; then
   # lib goes here when installing from a package
   BASE_PATH=$INSTALL_DIR
 fi
-source $BASE_PATH/oslxc/lib.sh
+source $BASE_PATH/oslxc/dispatch.sh
 
-mkdir -p $CONF_DIR
-[ -f $CONF_DIR/sshkey ] || {
-  info "Creating container SSH keypair"
-  echo y | ssh-keygen -f $CONF_DIR/sshkey -N "" -C oslxc-key -q
-}
+oslxc_command_bootstrap() ( source $BASE_PATH/oslxc/commands/bootstrap.sh )
+oslxc_command_nova() ( source $BASE_PATH/oslxc/commands/nova.sh )
+oslxc_command_ssh() ( source $BASE_PATH/oslxc/commands/ssh.sh )
+oslxc_command_help () ( source $BASE_PATH/oslxc/commands/help.sh )
 
-if [ `whoami` != "root" ]; then
-  warn "Need to run as root, trying sudo"
-  # Some environments do not allow to preserve the environment (-E)
-  if sudo -E /bin/true; then
-    exec sudo -E $BASE_PATH/$0 $@ > $LOG_FILE
-  else
-    exec sudo $BASE_PATH/$0 $@ > $LOG_FILE
-  fi
-fi
+oslxc_option_help() ( echo "Usage: oslxc [options] [command]" )
+oslxc_option_version() ( echo oslxc v0.1 )
+oslxc_ () ( source $BASE_PATH/oslxc/commands/help.sh )
 
-debug "Using Ubuntu mirror: $UBUNTU_MIRROR"
-
-if ! [[ "$@" =~ '--force-unsupported' ]]; then
-  egrep -q "DISTRIB_CODENAME=(utopic|trusty)" /etc/lsb-release || {
-    error "Ubuntu Precise and Trusty are the only releases supported."
-    exit 1
-  }
-fi
-
-need_pkg "lxc"
-need_pkg "sudo"
-need_pkg "iscsitarget-dkms"
-
-info "Loading required kernel modules"
-modprobe nbd
-modprobe scsi_transport_iscsi
-modprobe ebtables
-modprobe iscsi_trgt
-
-info "Creating the LXC container"
-quiet "lxc-create -n $LXC_NAME -t ubuntu -- -r precise --mirror http://$UBUNTU_MIRROR/ubuntu"
-
-# Enable KVM support
-if check_kvm_reqs; then
-  # /dev/kvm support
-  info "KVM acceleration available"
-  lxc_config_set $LXC_NAME "lxc.cgroup.devices.allow = c 10:232 rwm"
-  HYPERVISOR=kvm
-else
-  warn "No KVM acceleration support detected, using QEMU (bad performance)."
-fi
-
-# /dev/net/tun support
-lxc_config_set $LXC_NAME "lxc.cgroup.devices.allow = c 10:200 rwm"
-lxc_config_set $LXC_NAME "lxc.cgroup.devices.allow = b 7:* rwm"
-
-# lvm support inside the container
-lxc_config_set $LXC_NAME "lxc.cgroup.devices.allow = c 10:236 rwm"
-lxc_config_set $LXC_NAME "lxc.cgroup.devices.allow = b 252:* rwm"
-
-# /dev/loop* for loop mounting
-lxc_config_set $LXC_NAME "lxc.cgroup.devices.allow = b 7:* rwm"
-lxc_config_set $LXC_NAME "lxc.cgroup.devices.allow = c 10:237 rwm"
-
-lxc-start -n $LXC_NAME -d
-
-info "Waiting for the container to get an IP..."
-wait_for_container_ip $LXC_NAME
-
-mkdir $LXC_ROOTFS/$LXC_NAME
-cp -r $BASE_PATH/oslxc/ $BOOTSTRAP_DIR
-
-# Disable KVM support if not available
-kvm_ok? || sed -i "s/^virt_type.*/virt_type = qemu/" \
-  $BOOTSTRAP_DIR/configs/nova/nova*conf
-
-info "Proceeding with the install"
-info "Run 'tail -f $LOG_FILE' to follow progress"
-info "Error messages go to $LOG_FILE.errors"
-
-cat > $BOOTSTRAP_DIR/metadata << EOH
-HYPERVISOR=$HYPERVISOR
-EOH
-
-# Add the SSH public key to the container so we can SSH into it
-mkdir -p $LXC_ROOTFS/root/.ssh
-chmod 0700 $LXC_ROOTFS/root/.ssh
-cp $CONF_DIR/sshkey.pub $LXC_ROOTFS/root/.ssh/authorized_keys
-
-if ! lxc-attach -n $LXC_NAME bash $BOOTSTRAP_CDIR/install/install.sh \
-     2> $LOG_FILE.errors
-then
-  error "Failed to bootstrap OpenStack"
-  error "Tailing the last 5 lines of $LOG_FILE.errors:\n\n"
-  >&2 tail -n5 $LOG_FILE.errors | \
-    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"
-  exit 1
-fi
-
-info "Done!"
+dispatch oslxc "$@"

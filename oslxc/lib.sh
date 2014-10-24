@@ -23,7 +23,7 @@ debug() {
 }
 
 pkg_installed?(){
-  dpkg -l $1 | egrep "^ii\s+$1\s"
+  dpkg -l $1 | egrep "^ii\s+$1\s" > /dev/null
 }
 
 kvm_ok?() {

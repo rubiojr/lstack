@@ -5,7 +5,7 @@ columnize() {
   echo $@ | awk -F, '{ printf "%-20s %-40s\n", $1, $2}'
 }
 
-echo "Usage: oslxc [options] [command]"
+echo "Usage: lstack [options] [command]"
 echo
 echo "OPTIONS"
 echo

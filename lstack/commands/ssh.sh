@@ -11,12 +11,12 @@ if [ `whoami` != "root" ]; then
   exec sudo bash $CMD_PATH $@
 fi
 
-lxc-ls --running -1 | grep oslxc > /dev/null || {
-  error "Container 'oslxc' not runnig"
+lxc-ls --running -1 | grep lstack > /dev/null || {
+  error "Container 'lstack' not runnig"
   exit 1
 }
 
-ip=$(lxc-info -i -n oslxc | cut -d' ' -f2- | xargs | awk '{print $1}') || true
+ip=$(lxc-info -i -n lstack | cut -d' ' -f2- | xargs | awk '{print $1}') || true
 if [ -z "$ip" ]; then
   error "Container IP not found"
   exit 1
@@ -25,5 +25,5 @@ fi
 ssh -o StrictHostKeyChecking=no \
     -o UserKnownHostsFile=/dev/null \
     -l root \
-    -i ~/.config/oslxc/sshkey \
+    -i ~/.config/lstack/sshkey \
     $ip

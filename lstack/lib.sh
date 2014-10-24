@@ -92,7 +92,7 @@ cexe() {
     ssh -o StrictHostKeyChecking=no \
         -o UserKnownHostsFile=/dev/null \
         -l root \
-        -i ~/.config/oslxc/sshkey \
+        -i ~/.config/lstack/sshkey \
         $ip
   fi
 }

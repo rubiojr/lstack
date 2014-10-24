@@ -3,15 +3,15 @@ set -e
 
 BASE_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" && pwd )"
 CMD_PATH="${BASH_SOURCE[0]}"
-LXC_NAME=oslxc
+LXC_NAME=lstack
 LXC_ROOTFS=/var/lib/lxc/$LXC_NAME/rootfs
 LOG_FILE=/tmp/${LXC_NAME}.log
 UBUNTU_MIRROR=${UBUNTU_MIRROR:-archive.ubuntu.com}
-INSTALL_DIR=/usr/share/oslxc
+INSTALL_DIR=/usr/share/lstack
 export LC_ALL=en_US.UTF-8
-BOOTSTRAP_DIR=$LXC_ROOTFS/root/oslxc
-BOOTSTRAP_CDIR=/root/oslxc/
-CONF_DIR=$HOME/.config/oslxc
+BOOTSTRAP_DIR=$LXC_ROOTFS/root/lstack
+BOOTSTRAP_CDIR=/root/lstack/
+CONF_DIR=$HOME/.config/lstack
 if ! [ -f "$BASE_PATH/lib.sh" ]; then
   # lib goes here when installing from a package
   BASE_PATH=$INSTALL_DIR
@@ -21,7 +21,7 @@ source $BASE_PATH/lib.sh
 mkdir -p $CONF_DIR
 [ -f $CONF_DIR/sshkey ] || {
   info "Creating container SSH keypair"
-  echo y | ssh-keygen -f $CONF_DIR/sshkey -N "" -C oslxc-key -q
+  echo y | ssh-keygen -f $CONF_DIR/sshkey -N "" -C lstack-key -q
 }
 
 need_pkg "sudo"

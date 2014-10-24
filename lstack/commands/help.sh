@@ -15,6 +15,7 @@ echo
 echo "COMMANDS"
 echo
 columnize "bootstrap", "Bootstrap the OpenStack container"
+columnize "info",      "Print container info (lxc-info)"
 columnize "ssh",       "SSH into the container"
 columnize "nova",      "Run the nova command inside the container"
 columnize "destroy",   "Destroy the container"

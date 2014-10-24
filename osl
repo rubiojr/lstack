@@ -34,8 +34,15 @@ mkdir -p $CONF_DIR
 
 if [ `whoami` != "root" ]; then
   warn "Need to run as root, trying sudo"
-  exec sudo $BASE_PATH/$0 $@ > $LOG_FILE
+  # Some environments do not allow to preserve the environment (-E)
+  if sudo -E /bin/true; then
+    exec sudo -E $BASE_PATH/$0 $@ > $LOG_FILE
+  else
+    exec sudo $BASE_PATH/$0 $@ > $LOG_FILE
+  fi
 fi
+
+debug "Using Ubuntu mirror: $UBUNTU_MIRROR"
 
 if ! [[ "$@" =~ '--force-unsupported' ]]; then
   egrep -q "DISTRIB_CODENAME=(utopic|trusty)" /etc/lsb-release || {

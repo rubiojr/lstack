@@ -16,6 +16,12 @@ quiet() {
   $1 > /dev/null
 }
 
+debug() {
+  if [ -n "$VERBOSE" ]; then
+    >&2 echo -e "\e[34m** \e[0mDEBUG: $1"
+  fi
+}
+
 pkg_installed?(){
   dpkg -l $1 | egrep "^ii\s+$1\s"
 }

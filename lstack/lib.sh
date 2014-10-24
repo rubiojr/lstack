@@ -89,7 +89,7 @@ cexe() {
       error "Container IP not found"
       exit 1
     fi
-    ssh -o StrictHostKeyChecking=no \
+    ssh -q -o StrictHostKeyChecking=no \
         -o UserKnownHostsFile=/dev/null \
         -l root \
         -i ~/.config/lstack/sshkey \

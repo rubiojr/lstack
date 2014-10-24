@@ -16,14 +16,21 @@ lxc-ls --running -1 | grep lstack > /dev/null || {
   exit 1
 }
 
-ip=$(lxc-info -i -n lstack | cut -d' ' -f2- | xargs | awk '{print $1}') || true
-if [ -z "$ip" ]; then
+ips=$(lxc-info -i -n lstack | cut -d' ' -f2- | tac | xargs ) || true
+if [ -z "$ips" ]; then
   error "Container IP not found"
   exit 1
 fi
 
-ssh -o StrictHostKeyChecking=no \
-    -o UserKnownHostsFile=/dev/null \
-    -l root \
-    -i ~/.config/lstack/sshkey \
-    $ip
+# The container will have multiple IPs because nova-network so we wanna
+# try them all till we find the one that is reachable from the host.
+for ip in $ips; do
+  su - $SUDO_USER -c "ssh -o StrictHostKeyChecking=no \
+      -o ConnectTimeout=2 \
+      -o UserKnownHostsFile=/dev/null \
+      -l root \
+      -i ~/.config/lstack/sshkey \
+      $ip" || continue
+  # We've found the IP
+  break
+done

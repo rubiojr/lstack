@@ -13,13 +13,13 @@ fi
 
 # If the container was not fully provisioned vgrename may not be there
 if cexe "lstack" "which vgremove"; then
-  info "Removing the LVM volume"
+  debug "Removing the LVM volume"
   # try to remove the volume group only if it's there
-  cexe "lstack" "vgdisplay cinder-volumes" && \
-    cexe "lstack" "vgremove -f cinder-volumes"
-  info "Cleanup the loop device"
-  (losetup -a | grep loop6) && losetup -d /dev/loop6 || true
+  cexe "lstack" "vgdisplay cinder-volumes > /dev/null" && \
+    cexe "lstack" "vgremove -f cinder-volumes > /dev/null"
+  debug "Cleanup the loop device"
+  (losetup -a | grep -q loop6) && losetup -d /dev/loop6 || true
 fi
 
-info "Destroying the container"
+info "Destroying the container..."
 lxc-destroy -n lstack -f

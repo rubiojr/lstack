@@ -11,7 +11,7 @@ HYPERVISOR=${HYPERVISOR:-qemu}
 
 info "Enabling icehouse cloud-archive repo"
 apt-get update
-apt-get install -y python-software-properties openssh-server
+apt-get install -y python-software-properties openssh-server curl
 add-apt-repository -y cloud-archive:icehouse
 apt-get update
 apt-get dist-upgrade -y
@@ -53,6 +53,7 @@ $BASE_PATH/keystone_basic.sh
 $BASE_PATH/keystone_endpoints_basic.sh
 
 source $BASE_PATH/creds.sh
+cp $BASE_PATH/creds.sh /root
 # Some basic checking that keystone works
 keystone user-list
 
@@ -65,8 +66,12 @@ cp $BASE_PATH/../configs/glance/* /etc/glance/
 rm -f /var/lib/glance/glance.sqlite
 service glance-api restart; service glance-registry restart
 glance-manage db_sync
-glance image-create --name cirros0.3 --is-public true --container-format bare --disk-format qcow2 --location https://launchpad.net/cirros/trunk/0.3.0/+download/cirros-0.3.0-x86_64-disk.iimg || {
+curl https://launchpad.net/cirros/trunk/0.3.0/+download/cirros-0.3.0-x86_64-disk.img > /tmp/cirros-0.3.0.img || {
   error "Could not download Cirros 0.3 image from Launchpad. Aborting."
+  exit 1
+}
+glance image-create --name cirros0.3 --is-public true --container-format bare --disk-format qcow2 --file /tmp/cirros-0.3.0.img || {
+  error "Could not create the image in glance"
   exit 1
 }
 glance image-list

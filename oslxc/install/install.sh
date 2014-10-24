@@ -8,13 +8,12 @@ info() {
 BASE_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 export DEBIAN_FRONTEND=noninteractive
 
-source $BASE_PATH/metadata
+source $BASE_PATH/../metadata
 HYPERVISOR=${HYPERVISOR:-qemu}
 
 info "Enabling icehouse cloud-archive repo"
 apt-get update
-apt-get install -y python-software-properties
-
+apt-get install -y python-software-properties openssh-server
 add-apt-repository -y cloud-archive:icehouse
 apt-get update
 apt-get dist-upgrade -y
@@ -47,7 +46,7 @@ $BASE_PATH/populatedb.sh
 # KEYSTONE
 #
 info "Setting up keystone"
-cp $BASE_PATH/configs/keystone/* /etc/keystone/
+cp $BASE_PATH/../configs/keystone/* /etc/keystone/
 rm -f /var/lib/keystone/keystone.db
 service keystone restart
 keystone-manage db_sync
@@ -64,7 +63,7 @@ keystone user-list
 #
 
 info "Setting up glance"
-cp $BASE_PATH/configs/glance/* /etc/glance/
+cp $BASE_PATH/../configs/glance/* /etc/glance/
 rm -f /var/lib/glance/glance.sqlite
 service glance-api restart; service glance-registry restart
 glance-manage db_sync
@@ -72,7 +71,7 @@ glance image-create --name cirros0.3 --is-public true --container-format bare --
 glance image-list
 
 info "Setting up Cinder"
-cp $BASE_PATH/configs/cinder/* /etc/cinder/
+cp $BASE_PATH/../configs/cinder/* /etc/cinder/
 rm /var/lib/cinder/cinder.sqlite
 cinder-manage db sync
 dd if=/dev/zero of=/cinder-volumes bs=1 count=0 seek=55G
@@ -100,11 +99,11 @@ if [ "$HYPERVISOR" = "kvm" ]; then
   chgrp kvm /dev/kvm
 fi
 
-cp $BASE_PATH/configs/libvirt/* /etc/libvirt/
+cp $BASE_PATH/../configs/libvirt/* /etc/libvirt/
 virsh net-destroy default
 virsh net-undefine default
-cp $BASE_PATH/configs/default/* /etc/default/
-cp $BASE_PATH/configs/nova/* /etc/nova/
+cp $BASE_PATH/../configs/default/* /etc/default/
+cp $BASE_PATH/../configs/nova/* /etc/nova/
 service dbus restart && service libvirt-bin restart
 for f in /etc/init.d/nova-*; do $f restart; done
 rm -f /var/lib/nova/nova.sqlite

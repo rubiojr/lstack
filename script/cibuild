@@ -1,0 +1,17 @@
+#!/bin/bash
+set -e
+
+BASE_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" && pwd )"
+
+cleanup() {
+  $BASE_PATH/lstack.sh destroy >/dev/null 2>&1 || true
+}
+trap "cleanup" EXIT
+
+$BASE_PATH/lstack.sh bootstrap
+cirros_ip=$($BASE_PATH/lstack.sh ip)
+# A test Cirros VM is created by default when bootstrapping
+# The SSH port should be reachable if everything went fine.
+echo | nc -w 3 $cirros_ip 22 | grep OpenSSH > /dev/null
+$BASE_PATH/lstack.sh destroy
+echo OK!

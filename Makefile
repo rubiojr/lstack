@@ -26,3 +26,6 @@ build: $(PKG)
 clean:
 	rm -rf $(PKG_DIR)
 	rm -f $(SIG)
+
+debpkg: deborig
+	debuild -S && mv ../$(NAME)_* $(HOME)/debian/

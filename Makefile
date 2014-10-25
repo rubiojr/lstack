@@ -15,10 +15,14 @@ pkg:
 $(PKG): pkg
 	git archive --output=$(PKG) --prefix=$(PKG_NAME)/ HEAD
 
+deborig: $(PKG)
+	mv $(PKG) ../$(NAME)_$(VERSION).orig.tar.gz
+
 $(SIG): $(PKG)
 	gpg --sign --detach-sign --armor $(PKG)
 
 build: $(PKG)
 
 clean:
-	rm -f $(PKG) $(SIG)
+	rm -rf $(PKG_DIR)
+	rm -f $(SIG)

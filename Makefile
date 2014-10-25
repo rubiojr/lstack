@@ -19,3 +19,6 @@ $(SIG): $(PKG)
 	gpg --sign --detach-sign --armor $(PKG)
 
 build: $(PKG)
+
+clean:
+	rm -f $(PKG) $(SIG)

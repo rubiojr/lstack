@@ -29,7 +29,10 @@ lstack_command_ip()        ( source $BASE_PATH/lstack/commands/ip.sh)
 
 lstack_option_help()    ( echo "Usage: lstack [options] [command]" )
 lstack_option_version() ( echo lstack v$LSTACK_VERSION )
-lstack_option_force-unsupported() ( export FORCE_UNSUPPORTED=1 )
+lstack_option_force-unsupported() (
+  export FORCE_UNSUPPORTED=1
+  dispatch lstack "$@"
+)
 lstack_ ()              ( source $BASE_PATH/lstack/commands/help.sh )
 
 # Preflight check

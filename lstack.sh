@@ -9,6 +9,7 @@
 set -e
 [ -n "$DEBUG" ] && set -x
 
+LSTACK_VERSION=1.0
 INSTALL_DIR=/usr/share/lstack
 BASE_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 if ! [ -f "$BASE_PATH/lstack/lib.sh" ]; then
@@ -25,7 +26,7 @@ lstack_command_help() ( source $BASE_PATH/lstack/commands/help.sh )
 lstack_command_info() ( source $BASE_PATH/lstack/commands/info.sh )
 
 lstack_option_help() ( echo "Usage: lstack [options] [command]" )
-lstack_option_version() ( echo lstack v0.1 )
+lstack_option_version() ( echo lstack v$LSTACK_VERSION )
 lstack_ () ( source $BASE_PATH/lstack/commands/help.sh )
 
 dispatch lstack "$@"

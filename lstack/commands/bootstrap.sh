@@ -20,7 +20,6 @@ mkdir -p $CONF_DIR
   echo y | ssh-keygen -f $CONF_DIR/sshkey -N "" -C lstack-key -q
 }
 
-need_pkg "sudo"
 if [ `whoami` != "root" ]; then
   warn "Need to run as root, trying sudo"
   # Some environments do not allow to preserve the environment (-E)
@@ -32,16 +31,6 @@ if [ `whoami` != "root" ]; then
 fi
 
 debug "Using Ubuntu mirror: $UBUNTU_MIRROR"
-
-if ! [[ "$@" =~ '--force-unsupported' ]]; then
-  egrep -q "DISTRIB_CODENAME=(utopic|trusty)" /etc/lsb-release || {
-    error "Ubuntu Precise and Trusty are the only releases supported."
-    exit 1
-  }
-fi
-
-need_pkg "lxc"
-need_pkg "iscsitarget-dkms"
 
 info "Loading required kernel modules"
 modprobe nbd

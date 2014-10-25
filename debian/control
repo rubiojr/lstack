@@ -1,0 +1,16 @@
+Source: lstack
+Section: universe/admin
+Priority: extra
+Maintainer: Sergio Rubio <rubiojr@frameos.org>
+Build-Depends: debhelper (>= 9)
+Standards-Version: 3.9.5
+Homepage: https://github.com/rubiojr/lstack
+Vcs-Git: git://github.com/rubiojr/lstack.git
+Vcs-Browser: https://github.com/rubiojr/lstack
+Depends: iscsitarget-dkms, lxc, ${misc:Depends}
+
+Package: lstack
+Architecture: all
+Depends: ${misc:Depends}
+Description: Provision OpenStack LXC containers
+ lstack creates OpenStack LXC containers from the Ubuntu Cloud Archive.

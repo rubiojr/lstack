@@ -19,6 +19,14 @@ fi
 source $BASE_PATH/lstack/dispatch.sh
 source $BASE_PATH/lstack/lib.sh
 
+main() {
+  need_pkg "sudo"
+  need_pkg "lxc"
+  need_pkg "iscsitarget-dkms"
+
+  dispatch lstack "$@"
+}
+
 lstack_command_bootstrap() ( source $BASE_PATH/lstack/commands/bootstrap.sh )
 lstack_command_destroy()   ( source $BASE_PATH/lstack/commands/destroy.sh )
 lstack_command_nova()      ( source $BASE_PATH/lstack/commands/nova.sh )
@@ -29,22 +37,6 @@ lstack_command_ip()        ( source $BASE_PATH/lstack/commands/ip.sh)
 
 lstack_option_help()    ( echo "Usage: lstack [options] [command]" )
 lstack_option_version() ( echo lstack v$LSTACK_VERSION )
-lstack_option_force-unsupported() (
-  export FORCE_UNSUPPORTED=1
-  dispatch lstack "$@"
-)
 lstack_ ()              ( source $BASE_PATH/lstack/commands/help.sh )
 
-# Preflight check
-if [ -z "$FORCE_UNSUPPORTED" ]; then
-  egrep -q "DISTRIB_CODENAME=(utopic|trusty)" /etc/lsb-release || {
-    error "Ubuntu Precise and Trusty are the only releases supported."
-    exit 1
-  }
-fi
-
-need_pkg "sudo"
-need_pkg "lxc"
-need_pkg "iscsitarget-dkms"
-
-dispatch lstack "$@"
+main $@

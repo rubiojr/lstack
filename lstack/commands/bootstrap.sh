@@ -14,6 +14,8 @@ BOOTSTRAP_CDIR=/root/lstack/
 CONF_DIR=$HOME/.config/lstack
 source $BASE_PATH/lib.sh
 
+check_distro
+
 mkdir -p $CONF_DIR
 [ -f $CONF_DIR/sshkey ] || {
   info "Creating container SSH keypair"

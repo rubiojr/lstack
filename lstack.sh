@@ -19,14 +19,15 @@ fi
 source $BASE_PATH/lstack/dispatch.sh
 
 lstack_command_bootstrap() ( source $BASE_PATH/lstack/commands/bootstrap.sh )
-lstack_command_destroy() ( source $BASE_PATH/lstack/commands/destroy.sh )
-lstack_command_nova() ( source $BASE_PATH/lstack/commands/nova.sh )
-lstack_command_ssh() ( source $BASE_PATH/lstack/commands/ssh.sh )
-lstack_command_help() ( source $BASE_PATH/lstack/commands/help.sh )
-lstack_command_info() ( source $BASE_PATH/lstack/commands/info.sh )
+lstack_command_destroy()   ( source $BASE_PATH/lstack/commands/destroy.sh )
+lstack_command_nova()      ( source $BASE_PATH/lstack/commands/nova.sh )
+lstack_command_ssh()       ( source $BASE_PATH/lstack/commands/ssh.sh )
+lstack_command_help()      ( source $BASE_PATH/lstack/commands/help.sh )
+lstack_command_info()      ( source $BASE_PATH/lstack/commands/info.sh )
+lstack_command_ip()        ( source $BASE_PATH/lstack/commands/ip.sh)
 
-lstack_option_help() ( echo "Usage: lstack [options] [command]" )
+lstack_option_help()    ( echo "Usage: lstack [options] [command]" )
 lstack_option_version() ( echo lstack v$LSTACK_VERSION )
-lstack_ () ( source $BASE_PATH/lstack/commands/help.sh )
+lstack_ ()              ( source $BASE_PATH/lstack/commands/help.sh )
 
 dispatch lstack "$@"

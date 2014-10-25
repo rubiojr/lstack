@@ -99,7 +99,7 @@ cexe() {
 
 check_distro() {
   # Preflight check
-  egrep -q "DISTRIB_CODENAME=(trusty|utopic|trusty)" /etc/lsb-release || {
+  egrep -q "DISTRIB_CODENAME=(precise|utopic|trusty)" /etc/lsb-release || {
     error "Ubuntu Utopic, Trusty and Precise are the only releases supported."
     exit 1
   }

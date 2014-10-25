@@ -5,6 +5,7 @@ PKG_DIR=pkg
 PKG_NAME=$(NAME)-$(VERSION)
 PKG=$(PKG_DIR)/$(PKG_NAME).tar.gz
 SIG=$(PKG_DIR)/$(PKG_NAME).asc
+DEB_TARGET_DIR=$(HOME)/debian/$(NAME)
 
 PREFIX?=/usr/local
 DOC_DIR=$(PREFIX)/share/doc/$(PKG_NAME)
@@ -28,4 +29,5 @@ clean:
 	rm -f $(SIG)
 
 debpkg: deborig
-	debuild -S && mv ../$(NAME)_* $(HOME)/debian/
+	mkdir -p $(DEB_TARGET_DIR)
+	debuild -S && mv ../$(NAME)_* $(DEB_TARGET_DIR)

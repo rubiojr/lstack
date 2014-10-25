@@ -10,7 +10,7 @@ set -e
 [ -n "$DEBUG" ] && set -x
 
 LSTACK_VERSION=1.0
-INSTALL_DIR=/usr/share/lstack
+INSTALL_DIR=/usr/share/
 BASE_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 if ! [ -f "$BASE_PATH/lstack/lib.sh" ]; then
   # lib goes here when installing from a package

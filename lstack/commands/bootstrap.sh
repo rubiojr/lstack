@@ -12,10 +12,6 @@ export LC_ALL=en_US.UTF-8
 BOOTSTRAP_DIR=$LXC_ROOTFS/root/lstack
 BOOTSTRAP_CDIR=/root/lstack/
 CONF_DIR=$HOME/.config/lstack
-if ! [ -f "$BASE_PATH/lib.sh" ]; then
-  # lib goes here when installing from a package
-  BASE_PATH=$INSTALL_DIR
-fi
 source $BASE_PATH/lib.sh
 
 mkdir -p $CONF_DIR

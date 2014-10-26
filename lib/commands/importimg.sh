@@ -56,7 +56,7 @@ while true; do
 done
 
 rm -f $fifo
-if [ "$md5" = "$checksum" ]; then
+if [ "$md5" = "$glance_md5" ]; then
   info "Image imported"
 else
   error "The MD5 of the imported image does not match the source MD5"

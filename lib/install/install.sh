@@ -34,7 +34,7 @@ apt-get install -y python-mysqldb mysql-server rabbitmq-server \
                    nova-compute-$HYPERVISOR \
                    openstack-dashboard memcached nova-network \
                    nova-api cpu-checker qemu ebtables python-guestfs \
-                   cinder-api cinder-scheduler cinder-volume
+                   cinder-api cinder-scheduler cinder-volume xinetd
 
 update-guestfs-appliance
 

@@ -63,6 +63,7 @@ dispatch ()
 	fi
 
 	type $main_call > /dev/null 2>&1 || {
+    echo $main_call
 		>&2 echo -e "Invalid arguments.\n"
 		type ${namespace}_command_help > /dev/null 2>&1 && \
 			${namespace}_command_help

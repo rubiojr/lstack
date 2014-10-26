@@ -13,9 +13,9 @@ cleanup() {
 trap "cleanup" EXIT
 
 lstack bootstrap
-cirros_ip=$(lstack ip)
+cirros_ip=$(lstack nova list |grep -o "private=.*\s"|cut -d= -f2)
 # A test Cirros VM is created by default when bootstrapping
 # The SSH port should be reachable if everything went fine.
-echo | nc -w 3 $cirros_ip 22 | grep OpenSSH > /dev/null
+lstack ssh "echo | nc $cirros_ip 22" | grep dropbear > /dev/null
 lstack destroy
 echo OK!

@@ -8,11 +8,7 @@ volume_name=cinder-volumes
 loopdev=loop6
 
 check_distro
-
-if [ `whoami` != "root" ]; then
-  debug "Need to run as root, trying sudo"
-  exec sudo bash $CMD_PATH $@
-fi
+needs_root
 
 # If the container was not fully provisioned vgrename may not be there
 
@@ -25,13 +21,15 @@ if cexe "lstack" "which vgremove" > /dev/null; then
 fi
 
 debug "Cleanup the loop device"
-(losetup -a | grep -q $loopdev) && losetup -d /dev/$loopdev || {
-  warn "Failed to detach the file from the loop device, retrying..."
-  sleep 2; losetup -d /dev/$loopdev || {
-    error "Could not cleanup loop device. Aborting."
-    exit 1
+if losetup -a | grep -q $loopdev; then
+  losetup -d /dev/$loopdev || {
+    warn "Failed to detach the file from the loop device, retrying..."
+    sleep 2; losetup -d /dev/$loopdev || {
+      error "Could not cleanup loop device. Aborting."
+      exit 1
+    }
   }
-}
+fi
 
 info "Destroying the container..."
 lxc-destroy -n lstack -f

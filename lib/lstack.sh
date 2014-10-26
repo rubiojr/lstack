@@ -127,7 +127,7 @@ sshable_ip() {
 
 needs_root() {
   if [ `whoami` != "root" ]; then
-    error "Need to run as root, trying sudo"
+    error "Need to run as root."
     exit 1
   fi
 }

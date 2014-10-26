@@ -8,7 +8,7 @@ source $BASE_PATH/lstack.sh
 needs_root
 
 lxc-ls --running -1 | grep lstack > /dev/null || {
-  error "Container 'lstack' not runnig"
+  error "Container 'lstack' not running"
   exit 1
 }
 

@@ -75,7 +75,7 @@ cexe() {
   shift
 
   lxc-ls --running -1 | grep "$cname" > /dev/null || {
-    error "Container '$cname' not runnig"
+    error "Container '$cname' not running"
     exit 1
   }
 

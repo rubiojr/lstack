@@ -1,5 +1,5 @@
 NAME=lstack
-VERSION=$(shell grep ^LSTACK_VERSION lstack.sh | cut -d= -f2)
+VERSION=$(shell grep ^LSTACK_VERSION lstack | cut -d= -f2)
 
 PKG_DIR=pkg
 PKG_NAME=$(NAME)-$(VERSION)

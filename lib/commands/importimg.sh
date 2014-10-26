@@ -10,7 +10,7 @@ image=$1
 cname=lstack
 
 if ! [ -f "$image" ]; then
-  echo "Invalid image file $image."
+  echo "Invalid image file '$image'."
   exit 1
 fi
 

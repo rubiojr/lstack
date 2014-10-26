@@ -23,7 +23,11 @@ if cexe "lstack" "which vgremove" > /dev/null; then
 fi
 
 debug "Cleanup the loop device"
-(losetup -a | grep -q loop6) && losetup -d /dev/loop6 || true
+(losetup -a | grep -q loop6) && losetup -d /dev/loop6 || {
+  warn "Failed to detach the file from the loop device, retrying..."
+  sleep 3
+  (losetup -a | grep -q loop6) && losetup -d /dev/loop6 || true
+}
 
 info "Destroying the container..."
 lxc-destroy -n lstack -f

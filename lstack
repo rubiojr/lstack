@@ -35,6 +35,7 @@ lstack_command_help()          ( source $BASE_PATH/lib/commands/help.sh )
 lstack_command_info()          ( source $BASE_PATH/lib/commands/info.sh )
 lstack_command_ip()            ( source $BASE_PATH/lib/commands/ip.sh)
 lstack_command_importimg()     ( source $BASE_PATH/lib/commands/importimg.sh )
+lstack_command_deploy()        ( source $BASE_PATH/lib/commands/deploy.sh )
 
 lstack_option_help()    ( source $BASE_PATH/lib/commands/help.sh )
 lstack_option_version() ( echo lstack v$LSTACK_VERSION )

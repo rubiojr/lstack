@@ -24,12 +24,12 @@ fi
 # The container will have multiple IPs because nova-network so we wanna
 # try them all till we find the one that is reachable from the host.
 for ip in $ips; do
-  su - $SUDO_USER -c "ssh -q -o StrictHostKeyChecking=no \
+  ssh -q -o StrictHostKeyChecking=no \
       -o ConnectTimeout=2 \
       -o UserKnownHostsFile=/dev/null \
       -l root \
       -i ~/.config/lstack/sshkey \
-      $ip $@" || continue
+      $ip "$@" || continue
   # We've found the IP
   break
 done

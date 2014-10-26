@@ -15,6 +15,8 @@
 
 * Better loop device management (hardcoded to loop6 currently)
 * Unprivileged containers?
+* Custom name for the container (hardcoded to lstack now)
+* Forward command to forward container ports to the instances
 
 ## Tests
 

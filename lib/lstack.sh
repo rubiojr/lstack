@@ -124,3 +124,10 @@ sshable_ip() {
     echo $ip; break
   done
 }
+
+needs_root() {
+  if [ `whoami` != "root" ]; then
+    error "Need to run as root, trying sudo"
+    exit 1
+  fi
+}

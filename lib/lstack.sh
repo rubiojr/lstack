@@ -84,7 +84,7 @@ cexe() {
     lxc-attach -n "$cname" -- $@
   else
     warn "lxc-attach doesn't work here, trying SSH"
-    ip=$(lxc-info -i -n "$cname" | cut -d' ' -f2- | xargs | awk '{print $1}') || true
+    ip=$(sshable_ip $cname)
     if [ -z "$ip" ]; then
       error "Container IP not found"
       exit 1
@@ -103,4 +103,24 @@ check_distro() {
     error "Ubuntu Utopic, Trusty and Precise are the only releases supported."
     exit 1
   }
+}
+
+sshable_ip() {
+  local cname=$1
+
+  ips=$(lxc-info -i -n $cname | cut -d' ' -f2- | tac | xargs ) || true
+  if [ -z "$ips" ]; then
+    error "Container IP not found"
+    echo ""
+  fi
+  for ip in $ips; do
+    ssh -q -o StrictHostKeyChecking=no \
+        -o ConnectTimeout=2 \
+        -o UserKnownHostsFile=/dev/null \
+        -l root \
+        -i ~/.config/lstack/sshkey \
+        $ip true || continue
+    # We've found the IP
+    echo $ip; break
+  done
 }

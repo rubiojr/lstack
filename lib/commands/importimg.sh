@@ -10,12 +10,12 @@ image=$1
 cname=lstack
 
 if ! [ -f "$image" ]; then
-  echo "Invalid image file '$image'."
+  error "Invalid image file '$image'."
   exit 1
 fi
 
 file "$image" | grep "QCOW Image" > /dev/null 2>&1 || {
-  echo "Invalid image. Only QCOW images supported for now."
+  error "Invalid image. Only QCOW images supported for now."
   exit 1
 }
 

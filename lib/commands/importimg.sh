@@ -24,12 +24,18 @@ if [ `whoami` != "root" ]; then
   exec sudo bash $CMD_PATH $@
 fi
 
+fifo=$(mktemp -u)
+mkfifo $fifo
+{
+  md5sum "$image" | awk '{print $1}' > $fifo
+} &
+
 image_name=$(basename "$image")
 
 # hardlink the image to the container
-ln "$image" "/var/lib/lxc/$cname/rootfs/tmp/$image_name"
+ln -f "$image" "/var/lib/lxc/$cname/rootfs/tmp/$image_name"
 info "Importing the image into Glance..."
-img_id=$(cexe "$cname" "glance --os-username=$OS_USERNAME \
+glance_md5=$(cexe "$cname" "glance --os-username=$OS_USERNAME \
                       --os-password=$OS_PASSWORD \
                       --os-tenant-name $OS_TENANT_NAME \
                       --os-auth-url $OS_AUTH_URL \
@@ -37,14 +43,20 @@ img_id=$(cexe "$cname" "glance --os-username=$OS_USERNAME \
                       --is-public true \
                       --container-format bare \
                       --disk-format qcow2 \
-                      --file /tmp/$image_name | grep '\sid\s' | awk '{print \$4}'") || {
+                      --file /tmp/$image_name" | grep checksum | awk '{print $4}') || {
   error "Error importing the image"
   rm -f "/var/lib/lxc/$cname/rootfs/tmp/$image_name"
 }
 
-md5=$(md5sum "$image" | awk '{print $1}')
-glance_md5=$(cexe "$cname" "glance image-show $image_name | grep checksum | awk '{print \$4}'")
-if [ "$md5" = "$glance_md5" ]; then
+while true; do
+  if read md5 < $fifo; then
+    break;
+  fi
+  sleep 1
+done
+
+rm -f $fifo
+if [ "$md5" = "$checksum" ]; then
   info "Image imported"
 else
   error "The MD5 of the imported image does not match the source MD5"

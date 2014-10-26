@@ -37,9 +37,17 @@ dispatch ()
 		main_call=${namespace}_command_${long}
 	fi
 
+	type $main_call > /dev/null 2>&1 || {
+		>&2 echo -e "Invalid arguments.\n"
+		type ${namespace}_command_help > /dev/null 2>&1 && \
+			${namespace}_command_help
+		return 1
+        }
+
 	$main_call "${@:-}" && dispatch_returned=$? || dispatch_returned=$?
 
 	if [ $dispatch_returned = 127 ]; then
+		>&2 echo -e "Invalid command.\n"
 		"${namespace}_call_" "$namespace" "$arg" # Empty placeholder
 		return 1
 	fi

@@ -23,7 +23,7 @@ mkdir -p $CONF_DIR
   echo y | ssh-keygen -f $CONF_DIR/sshkey -N "" -C lstack-key -q
 }
 
-found=$(lxc-ls -1 | grep lstack)
+found=$(lxc-ls -1 | grep lstack) || true
 if [ -n "$found" ]; then
   [ "$1" = "-q" ] || warn "Container already running."
 else

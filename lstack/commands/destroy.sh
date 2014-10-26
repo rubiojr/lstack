@@ -8,7 +8,7 @@ source $BASE_PATH/lib.sh
 check_distro
 
 if [ `whoami` != "root" ]; then
-  warn "Need to run as root, trying sudo"
+  debug "Need to run as root, trying sudo"
   exec sudo bash $CMD_PATH $@
 fi
 

@@ -23,7 +23,7 @@ mkdir -p $CONF_DIR
 }
 
 if [ `whoami` != "root" ]; then
-  warn "Need to run as root, trying sudo"
+  debug "Need to run as root, trying sudo"
   # Some environments do not allow to preserve the environment (-E)
   if sudo -E /bin/true; then
     exec sudo -E $CMD_PATH $@ > $LOG_FILE

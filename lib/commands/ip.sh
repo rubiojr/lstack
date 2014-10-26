@@ -5,10 +5,7 @@ BASE_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" && pwd )"
 CMD_PATH="${BASH_SOURCE[0]}"
 source $BASE_PATH/lstack.sh
 
-if [ `whoami` != "root" ]; then
-  debug "Need to run as root, trying sudo"
-  exec sudo bash $CMD_PATH $@
-fi
+needs_root
 
 ips=$(lxc-info -i -n lstack | cut -d' ' -f2- | tac | xargs ) || true
 if [ -z "$ips" ]; then

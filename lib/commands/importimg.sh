@@ -9,6 +9,8 @@ source $BASE_PATH/install/creds.sh
 image=$1
 cname=lstack
 
+needs_root
+
 if ! [ -f "$image" ]; then
   error "Invalid image file '$image'."
   exit 1
@@ -18,11 +20,6 @@ file "$image" | grep "QCOW Image" > /dev/null 2>&1 || {
   error "Invalid image. Only QCOW images supported for now."
   exit 1
 }
-
-if [ `whoami` != "root" ]; then
-  debug "Need to run as root, trying sudo"
-  exec sudo bash $CMD_PATH $@
-fi
 
 fifo=$(mktemp -u)
 mkfifo $fifo

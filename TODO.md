@@ -14,6 +14,7 @@
 ## General improvements
 
 * Better loop device management (hardcoded to loop6 currently)
+* Unprivileged containers?
 
 ## Tests
 

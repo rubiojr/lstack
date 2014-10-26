@@ -78,3 +78,5 @@ $ sudo lstack nova flavor-list
 ## Credits
 
 * https://github.com/fornyx/OpenStack-Havana-Install-Guide for such an excelent guide that helped me to tame the Icehouse beast.
+* [The Awesome Shell repo](https://github.com/alebcay/awesome-shell).
+* The great [dispatch](https://github.com/Mosai/workshop/blob/master/doc/dispatch.md) implementation.

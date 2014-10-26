@@ -38,6 +38,10 @@ info                  Print container info (lxc-info)
 ssh                   SSH into the container
 nova                  Run the nova command inside the container
 destroy               Destroy the container
+ip                    Print the IP of the container
+importimg             Import a QCOW2 image to Glance
+deploy                Create an instance from a QCOW2 image
+
 ```
 
 To destroy the container:

@@ -3,8 +3,8 @@
 Create OpenStack LXC containers.
 
 ```bash
-git clone https://github.com/rubiojr/lstack
-./lstack.sh bootstrap
+$ git clone https://github.com/rubiojr/lstack
+$ lstack bootstrap
 ```
 
 ## Description
@@ -22,8 +22,8 @@ Creates an LXC container and installs OpenStack Icehouse from the Ubuntu Cloud A
 
 lstack has a built-in help:
 
-```
-$ ./lstack.sh --help
+```bash
+$ lstack --help
 Usage: lstack [options] [command]
 
 OPTIONS
@@ -46,20 +46,31 @@ deploy                Create an instance from a QCOW2 image
 
 To destroy the container:
 
-```
-$ ./lstack.sh destroy
+```bash
+$ sudo lstack destroy
 ** Destroying the container...
 ```
 
 To SSH to the container:
 
+```bash
+$ sudo lstack ssh
 ```
-$ ./lstack.ssh ssh
+
+To create an instance from a QCOW2 image:
+
+```bash
+$ sudo lstack deploy --file /path/to/image.qcow2 --name test --flavor m1.tiny
+```
+
+To run Nova commands inside the container use the nova command:
+
+```bash
+$ sudo lstack nova flavor-list
 ```
 
 ## Notes
 
-* Ubuntu Trusty and Utopic are the only hosts tested right now.
 * Neutron is not supported right now. I'm using a flat network with nova-network.
 * Provisioning time usually takes between 3 and 10 minutes. A fast download pipe (or an APT cache) and a speedy SSD should do it in ~3 minutes.
 * Cinder is configured to use BlockDeviceDriver. More on this later.

@@ -13,9 +13,34 @@ cleanup() {
 trap "cleanup" EXIT
 
 lstack bootstrap
-cirros_ip=$(lstack nova list |grep -o "private=.*\s"|cut -d= -f2)
+
+# Wait for the instance to boot
+for i in $(seq 1 10); do
+  cirros_ip=$(lstack nova list |grep -o "private=.*\s"|cut -d= -f2|tr -d ' ') \
+    || true
+  [ -n "$cirros_ip" ] && break
+
+  sleep 5
+done
+
+if [ -z "$cirros_ip" ]; then
+  >&2 echo Cirros instance IP not found.
+  exit 1
+fi
+
+
 # A test Cirros VM is created by default when bootstrapping
 # The SSH port should be reachable if everything went fine.
-lstack ssh "echo | nc $cirros_ip 22" | grep dropbear > /dev/null
-lstack destroy
+echo "Testing Cirros instance SSH ($cirros_ip)..."
+# SSH daemon may take some time to come up, so we need to wait.
+for i in $(seq 1 10); do
+  (lstack ssh "echo | nc $cirros_ip 22" | grep dropbear > /dev/null) && ssh_ok=1
+
+  sleep 5
+done
+if [ -z "$ssh_ok" ]; then
+  >&2 SSH test failed!
+  exit 1
+fi
+
 echo OK!

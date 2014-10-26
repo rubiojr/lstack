@@ -5,7 +5,7 @@ BASE_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 export DEBIAN_FRONTEND=noninteractive
 
 source $BASE_PATH/../metadata
-source $BASE_PATH/../lib.sh
+source $BASE_PATH/../lstack.sh
 
 HYPERVISOR=${HYPERVISOR:-qemu}
 

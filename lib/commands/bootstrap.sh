@@ -32,6 +32,11 @@ if [ `whoami` != "root" ]; then
   fi
 fi
 
+lxc-ls -1 | grep lstack && {
+  warn "Container already running. Destroy it first."
+  exit 0
+}
+
 debug "Using Ubuntu mirror: $UBUNTU_MIRROR"
 
 info "Loading required kernel modules"

@@ -4,6 +4,8 @@ set -e
 BASE_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" && pwd )"
 CMD_PATH="${BASH_SOURCE[0]}"
 source $BASE_PATH/lib.sh
+volume_name=cinder-volumes
+loopdev=loop6
 
 check_distro
 
@@ -17,16 +19,16 @@ fi
 if cexe "lstack" "which vgremove" > /dev/null; then
   debug "Removing the LVM volume"
   # try to remove the volume group only if it's there
-  if cexe "lstack" "vgdisplay cinder-volumes" > /dev/null 2>&1; then
-    cexe "lstack" "vgremove -f cinder-volumes" > /dev/null 2>&1
+  if cexe "lstack" "vgdisplay $volume_name" > /dev/null 2>&1; then
+    cexe "lstack" "vgremove -f $volume_name" > /dev/null 2>&1
   fi
 fi
 
 debug "Cleanup the loop device"
-(losetup -a | grep -q loop6) && losetup -d /dev/loop6 || {
+(losetup -a | grep -q $loopdev) && losetup -d /dev/$loopdev || {
   warn "Failed to detach the file from the loop device, retrying..."
   sleep 3
-  (losetup -a | grep -q loop6) && losetup -d /dev/loop6 || true
+  (losetup -a | grep -q $loopdev) && losetup -d /dev/$loopdev || true
 }
 
 info "Destroying the container..."

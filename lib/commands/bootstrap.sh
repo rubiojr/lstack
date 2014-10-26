@@ -12,7 +12,7 @@ export LC_ALL=en_US.UTF-8
 BOOTSTRAP_DIR=$LXC_ROOTFS/root/lstack
 BOOTSTRAP_CDIR=/root/lstack/
 CONF_DIR=$HOME/.config/lstack
-source $BASE_PATH/lib.sh
+source $BASE_PATH/lstack.sh
 
 check_distro
 

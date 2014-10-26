@@ -3,7 +3,7 @@ set -e
 
 BASE_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" && pwd )"
 CMD_PATH="${BASH_SOURCE[0]}"
-source $BASE_PATH/lib.sh
+source $BASE_PATH/lstack.sh
 volume_name=cinder-volumes
 loopdev=loop6
 

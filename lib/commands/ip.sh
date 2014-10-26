@@ -3,17 +3,12 @@ set -e
 
 BASE_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" && pwd )"
 CMD_PATH="${BASH_SOURCE[0]}"
-source $BASE_PATH/lib.sh
+source $BASE_PATH/lstack.sh
 
 if [ `whoami` != "root" ]; then
   debug "Need to run as root, trying sudo"
   exec sudo bash $CMD_PATH $@
 fi
-
-lxc-ls --running -1 | grep lstack > /dev/null || {
-  error "Container 'lstack' not runnig"
-  exit 1
-}
 
 ips=$(lxc-info -i -n lstack | cut -d' ' -f2- | tac | xargs ) || true
 if [ -z "$ips" ]; then
@@ -29,7 +24,8 @@ for ip in $ips; do
       -o UserKnownHostsFile=/dev/null \
       -l root \
       -i ~/.config/lstack/sshkey \
-      $ip $@" || continue
+      $ip true" || continue
   # We've found the IP
+  echo $ip
   break
 done

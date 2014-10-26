@@ -4,7 +4,7 @@ set -e
 BASE_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" && pwd )"
 
 lstack() {
-  $BASE_PATH/lstack.sh $@
+  $BASE_PATH/lstack $@
 }
 
 cleanup() {

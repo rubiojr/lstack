@@ -1,2 +1,2 @@
-lstack usr/share/
-lstack.sh usr/bin
+lib usr/share/lstack
+lstack usr/bin

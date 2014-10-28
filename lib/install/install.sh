@@ -102,7 +102,7 @@ lvcreate --name disk4 --size 10G $VGNAME
 lvcreate --name disk5 --size 10G $VGNAME
 
 cp $BASE_PATH/../configs/cinder/* /etc/cinder/
-sed -i "s/cinder-volumes/$VGNAME/" /etc/cinder/cinder.conf
+sed -i "s/cinder-volumes/$VGNAME/g" /etc/cinder/cinder.conf
 rm /var/lib/cinder/cinder.sqlite
 cinder-manage db sync
 cd /etc/init.d/; for i in $( ls cinder-* ); do

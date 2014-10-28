@@ -39,7 +39,7 @@ for port in $@; do
     continue
   }
 
-  cat > $LSTACK_ROOTFS/etc/xinetd.d/$port << EOF
+  cat > $LSTACK_ROOTFS/etc/xinetd.d/lstack$port << EOF
 service $port
 {
   flags = IPv4

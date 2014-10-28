@@ -12,9 +12,11 @@ cleanup() {
 }
 trap "cleanup" EXIT
 
+echo ""** Testing bootstrap...**
 lstack bootstrap
 
 # Wait for the instance to boot
+echo "** Testing the Cirros instance booted..."
 for i in $(seq 1 10); do
   cirros_ip=$(lstack nova list |grep -o "private=.*\s"|cut -d= -f2|tr -d ' ') \
     || true
@@ -28,6 +30,9 @@ if [ -z "$cirros_ip" ]; then
   exit 1
 fi
 
+#
+# Test connectivity to the instance
+#
 
 # A test Cirros VM is created by default when bootstrapping
 # The SSH port should be reachable if everything went fine.
@@ -46,8 +51,10 @@ if [ -z "$ssh_ok" ]; then
   exit 1
 fi
 
+#
 # Test 22 port forwarding
-echo "** TCP/22 forwarding..."
+#
+echo "** Testing TCP/22 forwarding..."
 ip=$(lstack ip)
 lstack forward test 22
 # may not be ready, retry
@@ -55,16 +62,19 @@ read -r ssh_ok < /dev/tcp/$ip/22 || {
   sleep 2
   read -r ssh_ok < /dev/tcp/$ip/22
 }
+# 22/tcp now goes to the Cirros instance so it should be the dropbear SSH server
 if ! [[ "$ssh_ok" =~ dropbear ]]; then
   >&2 echo "SSH forward test (instance) failed!"
   exit 1
 fi
 
+# Container's OpenSSH now should listen on 2200/tcp
 read -r ssh_ok < /dev/tcp/$ip/2200
 if ! [[ "$ssh_ok" =~ OpenSSH ]]; then
   >&2 echo "SSH forward test (container) failed!"
   exit 1
 fi
 
+echo "** Testing destroy..."
 lstack destroy
-echo OK!
+echo "** Tests OK!"

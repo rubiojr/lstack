@@ -69,6 +69,14 @@ To run Nova commands inside the container use the nova command:
 $ sudo lstack nova flavor-list
 ```
 
+To forward container ports to a running instance:
+
+```bash
+$ sudo lstack forward test 22 443
+```
+
+TCP connections to the ports 22 and 443 of container will be forwarded to the 'test' instance ports 22 and 443.
+
 ## Notes
 
 * Neutron is not supported right now. I'm using a flat network with nova-network.

@@ -47,7 +47,11 @@ lxc_config_set() {
   local cname=$1
   local string=$2
 
-  echo "$string" >> /var/lib/lxc/$cname/config
+  if ! [ grep "$string" /var/lib/lxc/$LSTACK_NAME/config ]; then
+    echo "$string" >> /var/lib/lxc/$LSTACK_NAME/config
+  else
+    warn "$string already present in the container configuration"
+  fi
 }
 
 need_pkg() {
@@ -83,6 +87,7 @@ cexe() {
   if lxc-attach -n "$cname" /bin/true 2>/dev/null; then
     lxc-attach -n "$cname" -- $@
   else
+    ssh_port=$(config_get "lstack.ssh_port") || "22"
     warn "lxc-attach doesn't work here, trying SSH"
     ip=$(sshable_ip $cname)
     if [ -z "$ip" ]; then
@@ -90,6 +95,7 @@ cexe() {
       exit 1
     fi
     ssh -q -o StrictHostKeyChecking=no \
+        -p "$ssh_port" \
         -o UserKnownHostsFile=/dev/null \
         -l root \
         -i ~/.config/lstack/sshkey \
@@ -113,8 +119,10 @@ sshable_ip() {
     error "Container IP not found"
     echo ""
   fi
+  ssh_port=$(config_get "lstack.ssh_port") || "22"
   for ip in $ips; do
     ssh -q -o StrictHostKeyChecking=no \
+        -p "$ssh_port" \
         -o ConnectTimeout=2 \
         -o UserKnownHostsFile=/dev/null \
         -l root \
@@ -130,4 +138,60 @@ needs_root() {
     error "Need to run as root."
     exit 1
   fi
+}
+
+instance_running?() {
+  local name="$1"
+
+  source $BASE_PATH/install/creds.sh
+  cexe "$LSTACK_NAME" "nova --os-username $OS_USERNAME \
+                      --os-password=$OS_PASSWORD \
+                      --os-tenant-name $OS_TENANT_NAME \
+                      --os-auth-url $OS_AUTH_URL list" | grep "$name" > /dev/null
+}
+
+instance_ip() {
+  echo $(cexe "$LSTACK_NAME" "nova list" |grep -o "private=.*\s" | cut -d= -f2 | tr -d ' ')
+  ip=$(cexe "$LSTACK_NAME" "nova list" |grep -o "private=.*\s" | cut -d= -f2 | tr -d ' ') || true
+}
+
+config_set() {
+  local key=$1
+  local value=$2
+
+  if ! [[ "$key" =~ ^lstack\. ]]; then
+    warn "Container config keys must start with 'lstack.<keyname>'. Ignoring."
+    return 0
+  fi
+
+  if [ -z "$value" ]; then
+    error "Value for $key is empty"
+    return 1
+  fi
+
+  if ! grep "^$key" /var/lib/lxc/$LSTACK_NAME/config >/dev/null; then
+    echo "$key=$value" >> /var/lib/lxc/$LSTACK_NAME/config
+  else
+    sed -i "s/^$key.*/$key=$value/" /var/lib/lxc/$LSTACK_NAME/config
+  fi
+}
+
+config_get() {
+  local key="$1"
+  local default="$2"
+
+  if ! [[ "$key" =~ ^lstack\. ]]; then
+    warn "Container config keys must start with 'lstack.<keyname>'. Ignoring."
+    return 0
+  fi
+
+  val=$(grep "^$key" /var/lib/lxc/$LSTACK_NAME/config | cut -d= -f2)
+
+  if [ -z "$val" ] && [ -z "$default" ]; then
+    error "Config key $key does not have a value and default is not provided"
+    return 1
+  fi
+
+  [ -z "$val" ] && val="$default"
+  echo $val
 }

@@ -22,4 +22,5 @@ columnize "destroy",        "Destroy the container"
 columnize "ip",             "Print the IP of the container"
 columnize "importimg",      "Import a QCOW2 image to Glance"
 columnize "deploy",         "Create an instance from a QCOW2 image"
+columnize "forward",        "Forward ports to a running intsance"
 echo

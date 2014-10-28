@@ -15,13 +15,15 @@ fi
 
 # The container will have multiple IPs because nova-network so we wanna
 # try them all till we find the one that is reachable from the host.
+ssh_port=$(config_get "lstack.ssh_port" "22")
 for ip in $ips; do
-  su - $SUDO_USER -c "ssh -q -o StrictHostKeyChecking=no \
+  ssh -q -o StrictHostKeyChecking=no \
+      -p "$ssh_port" \
       -o ConnectTimeout=2 \
       -o UserKnownHostsFile=/dev/null \
       -l root \
       -i ~/.config/lstack/sshkey \
-      $ip true" || continue
+      $ip true || continue
   # We've found the IP
   echo $ip
   break

@@ -42,7 +42,7 @@ debug "Cleanup the loop device"
 if losetup -a | grep -q $LOOPDEV; then
   losetup -d /dev/$LOOPDEV || {
     warn "Failed to detach the file from the loop device, retrying..."
-    sleep 2; losetup -d /dev/$loopdev || {
+    sleep 2; losetup -d /dev/$LOOPDEV || {
       error "Could not cleanup loop device. Aborting."
       exit 1
     }

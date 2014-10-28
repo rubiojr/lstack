@@ -34,7 +34,10 @@ fi
 echo "Testing Cirros instance SSH ($cirros_ip)..."
 # SSH daemon may take some time to come up, so we need to wait.
 for i in $(seq 1 10); do
-  (lstack ssh "echo | nc $cirros_ip 22" | grep dropbear > /dev/null) && ssh_ok=1
+  (lstack ssh "echo | nc $cirros_ip 22" | grep dropbear > /dev/null) && {
+    ssh_ok=1
+    break
+  }
 
   sleep 5
 done

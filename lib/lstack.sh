@@ -12,11 +12,11 @@ color()  {
 }
 
 info() {
-  [ -z "$LSTACK_QUIET" ] && green "INFO: $1"
+  [ -n "$LSTACK_QUIET" ] || green "INFO: $1"
 }
 
 warn() {
-  [ -z "$LSTACK_QUIET" ] && yellow "WARN: $1"
+  [ -n "$LSTACK_QUIET" ] || yellow "WARN: $1"
 }
 
 error() {
@@ -28,7 +28,7 @@ quiet() {
 }
 
 debug() {
-  if [ -n "$VERBOSE" ]; then
+  if [ -n "$LSTACK_DEBUG" ]; then
     >&2 echo -e "\e[34m** \e[0mDEBUG: $1"
   fi
 }

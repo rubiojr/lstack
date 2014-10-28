@@ -36,14 +36,14 @@ main(){
                                         --flavor $deploy_flavor \
                                         "$deploy_name" > /dev/null
   else
-    __volid=$(cinder_create "10")
+    __volid=$(cinder_create "$deploy_volume")
     if [ -z "$__volid" ]; then
       error "Could not create the Cinder volume!"
       exit 1
     fi
     source $BASE_PATH/commands/nova.sh boot \
                                         --image "$gid" \
-                                        --block-device source=volume,id=__volid,dest=volume,shutdown=preserve \
+                                        --block-device source=volume,id=$__volid,dest=volume,shutdown=preserve \
                                         --flavor $deploy_flavor \
                                         "$deploy_name" > /dev/null
   fi

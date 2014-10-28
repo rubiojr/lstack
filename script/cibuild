@@ -12,7 +12,7 @@ cleanup() {
 }
 trap "cleanup" EXIT
 
-echo ""** Testing bootstrap...**
+echo "** Testing bootstrap..."
 lstack bootstrap
 
 # Wait for the instance to boot

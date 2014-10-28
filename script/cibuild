@@ -46,19 +46,18 @@ if [ -z "$ssh_ok" ]; then
   exit 1
 fi
 
-# Test 22 port forward
-ssh_ok=""
+# Test 22 port forwarding
 echo "** TCP/22 forwarding..."
+ip=$(lstack ip)
 lstack forward test 22
-echo | nc $(lstack ip) 22 | grep dropbear > /dev/null && ssh_ok=1
-if [ -z "$ssh_ok" ]; then
+read -r ssh_ok < /dev/tcp/$ip/22
+if ! [[ "$ssh_ok" =~ dropbear ]]; then
   >&2 echo "SSH forward test (instance) failed!"
   exit 1
 fi
 
-ssh_ok=""
-echo | nc $(lstack ip) 2200 | grep OpenSSH > /dev/null && ssh_ok=1
-if [ -z "$ssh_ok" ]; then
+read -r ssh_ok < /dev/tcp/$ip/2200
+if ! [[ "$ssh_ok" =~ OpenSSH ]]; then
   >&2 echo "SSH forward test (container) failed!"
   exit 1
 fi

@@ -31,7 +31,7 @@ fi
 
 # A test Cirros VM is created by default when bootstrapping
 # The SSH port should be reachable if everything went fine.
-echo "Testing Cirros instance SSH ($cirros_ip)..."
+echo "** Testing Cirros instance SSH ($cirros_ip)..."
 # SSH daemon may take some time to come up, so we need to wait.
 for i in $(seq 1 10); do
   (lstack ssh "echo | nc $cirros_ip 22" | grep dropbear > /dev/null) && {
@@ -48,6 +48,7 @@ fi
 
 # Test 22 port forward
 ssh_ok=""
+echo "** TCP/22 forwarding..."
 lstack forward test 22
 echo | nc $(lstack ip) 22 | grep dropbear > /dev/null && ssh_ok=1
 if [ -z "$ssh_ok" ]; then

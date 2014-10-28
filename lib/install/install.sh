@@ -79,19 +79,35 @@ glance image-create --name cirros0.3 --is-public true --container-format bare --
 glance image-list
 
 info "Setting up Cinder"
+# VGNAME comes from the metadata file
+dd if=/dev/zero of=/$VGNAME bs=1 count=0 seek=55G
+loopdev=$(losetup -f)
+# retry if fails to avoid race conditions
+losetup $loopdev /$VGNAME || {
+  loopdev=$(losetup -f)
+  losetup $loopdev /$VGNAME || {
+    error "Failed to setup the loop device"
+    exit 1
+  }
+}
+# Save the loop dev for later cleanup
+echo "LOOPDEV=$loopdev" >> $BASE_PATH/../metadata
+
+pvcreate $loopdev
+vgcreate $VGNAME $loopdev
+lvcreate --name disk1 --size 10G $VGNAME
+lvcreate --name disk2 --size 10G $VGNAME
+lvcreate --name disk3 --size 10G $VGNAME
+lvcreate --name disk4 --size 10G $VGNAME
+lvcreate --name disk5 --size 10G $VGNAME
+
 cp $BASE_PATH/../configs/cinder/* /etc/cinder/
+sed -i "s/cinder-volumes/$VGNAME/" /etc/cinder/cinder.conf
 rm /var/lib/cinder/cinder.sqlite
 cinder-manage db sync
-dd if=/dev/zero of=/cinder-volumes bs=1 count=0 seek=55G
-losetup /dev/loop6 /cinder-volumes
-pvcreate /dev/loop6
-vgcreate cinder-volumes /dev/loop6
-lvcreate --name disk1 --size 10G cinder-volumes
-lvcreate --name disk2 --size 10G cinder-volumes
-lvcreate --name disk3 --size 10G cinder-volumes
-lvcreate --name disk4 --size 10G cinder-volumes
-lvcreate --name disk5 --size 10G cinder-volumes
-cd /etc/init.d/; for i in $( ls cinder-* ); do sudo service $i restart; cd /root/; done
+cd /etc/init.d/; for i in $( ls cinder-* ); do
+  service $i restart; cd /root/;
+done
 
 #
 # Nova

@@ -79,6 +79,7 @@ else
 
   cat > $BOOTSTRAP_DIR/metadata << EOH
 HYPERVISOR=$HYPERVISOR
+VGNAME=$LSTACK_NAME-vg
 EOH
 
   # Add the SSH public key to the container so we can SSH into it

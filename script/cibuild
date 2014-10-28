@@ -18,7 +18,7 @@ lstack bootstrap
 # Wait for the instance to boot
 echo "** Testing the Cirros instance booted..."
 for i in $(seq 1 10); do
-  cirros_ip=$(lstack nova list |grep -o "private=.*\s"|cut -d= -f2|tr -d ' ') \
+  cirros_ip=$(lstack nova list | grep test | grep -o "private=.*\s"|cut -d= -f2|tr -d ' ') \
     || true
   [ -n "$cirros_ip" ] && break
 

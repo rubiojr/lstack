@@ -47,7 +47,7 @@ lxc_config_set() {
   local cname=$1
   local string=$2
 
-  if ! [ grep "$string" /var/lib/lxc/$LSTACK_NAME/config ]; then
+  if ! grep "$string" /var/lib/lxc/$LSTACK_NAME/config; then
     echo "$string" >> /var/lib/lxc/$LSTACK_NAME/config
   else
     warn "$string already present in the container configuration"

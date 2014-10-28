@@ -1,7 +1,5 @@
 #!/bin/bash
 
-BASE_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-
 info() {
   >&2 echo -e "\e[32m** \e[0m$1"
 }
@@ -150,7 +148,6 @@ instance_running?() {
     exit 1
   fi
 
-  source $BASE_PATH/install/creds.sh
   nova_command "list" | grep "$name" > /dev/null
 }
 
@@ -161,7 +158,8 @@ nova_command() {
     exit 1
   fi
 
-  source $BASE_PATH/install/creds.sh
+  local creds="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/install/creds.sh"
+  source $creds
   cexe "$LSTACK_NAME" "nova --os-username $OS_USERNAME \
                       --os-password=$OS_PASSWORD \
                       --os-tenant-name $OS_TENANT_NAME \

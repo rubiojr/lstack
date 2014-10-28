@@ -20,7 +20,7 @@ if [ -z "$(instance_ip $instance)" ]; then
   exit 1
 fi
 
-if [ -z "$@" ]; then
+if [ -z "$1" ]; then
   error "No ports to forward"
   exit 1
 fi

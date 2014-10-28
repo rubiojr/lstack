@@ -49,6 +49,7 @@ lstack_command_forward()       ( source $BASE_PATH/lib/commands/forward.sh )
 
 lstack_option_help()    ( source $BASE_PATH/lib/commands/help.sh )
 lstack_option_version() ( echo lstack v$LSTACK_VERSION )
+lstack_option_nocolor() ( export LSTACK_NOCOLOR=1; dispatch lstack "$@" )
 lstack_ ()              ( source $BASE_PATH/lib/commands/help.sh )
 
 main $@

@@ -11,6 +11,7 @@ echo "OPTIONS"
 echo
 columnize "--help",         "Print help"
 columnize "--version",      "Print version"
+columnize "--nocolor",      "No colors for the output"
 echo
 echo "COMMANDS"
 echo

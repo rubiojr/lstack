@@ -1,15 +1,26 @@
 #!/bin/bash
 
+green()  { color "32" "$1"; }
+yellow() { color "33" "$1"; }
+red()    { color "31" "$1"; }
+color()  {
+  if [ "$LSTACK_NOCOLOR" = 1 ]; then
+    echo "** $2";
+  else
+    >&2 echo -e "\e[${1}m**\e[0m $2";
+  fi
+}
+
 info() {
-  >&2 echo -e "\e[32m** \e[0m$1"
+  green "INFO: $1"
 }
 
 warn() {
-  >&2 echo -e "\e[33m** \e[0mWARN: $1"
+  yellow "WARN: $1"
 }
 
 error() {
-  >&2 echo -e "\e[31m** \e[0mERROR: $1"
+  red "ERROR: $1"
 }
 
 quiet() {

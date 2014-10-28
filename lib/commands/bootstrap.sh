@@ -74,9 +74,9 @@ else
   kvm_ok? || sed -i "s/^virt_type.*/virt_type = qemu/" \
     $BOOTSTRAP_DIR/configs/nova/nova*conf
 
-  info "Proceeding with the install"
   info "Run 'tail -f $LOG_FILE' to follow progress"
   info "Error messages go to $LOG_FILE.errors"
+  info "Proceeding with the install (will take some time)..."
 
   # Redirect stdout to log file
   exec > "$LOG_FILE"

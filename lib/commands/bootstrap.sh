@@ -3,21 +3,17 @@ set -e
 
 BASE_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" && pwd )"
 CMD_PATH="${BASH_SOURCE[0]}"
-LXC_ROOTFS=/var/lib/lxc/$LSTACK_NAME/rootfs
-LOG_FILE=/tmp/${LSTACK_NAME}.log
+
 UBUNTU_MIRROR=${UBUNTU_MIRROR:-archive.ubuntu.com}
-BOOTSTRAP_DIR=$LXC_ROOTFS/root/lstack
-BOOTSTRAP_CDIR=/root/lstack/
-CONF_DIR=$HOME/.config/lstack
 source $BASE_PATH/lstack.sh
 
 check_distro
 needs_root
 
-mkdir -p $CONF_DIR
-[ -f $CONF_DIR/sshkey ] || {
+mkdir -p $LSTACK_CONF_DIR
+[ -f $LSTACK_CONF_DIR/sshkey ] || {
   info "Creating container SSH keypair"
-  echo y | ssh-keygen -f $CONF_DIR/sshkey -N "" -C lstack-key -q
+  echo y | ssh-keygen -f $LSTACK_CONF_DIR/sshkey -N "" -C lstack-key -q
 }
 
 found=$(lxc-ls -1 | grep $LSTACK_NAME) || true
@@ -67,37 +63,36 @@ else
   info "Waiting for the container to get an IP..."
   wait_for_container_ip $LSTACK_NAME
 
-  mkdir $LXC_ROOTFS/$LSTACK_NAME
-  cp -r $BASE_PATH/ $BOOTSTRAP_DIR
+  mkdir $LSTACK_ROOTFS/$LSTACK_NAME
+  cp -r $BASE_PATH/ $LSTACK_ROOTFS/root/lstack
 
   # Disable KVM support if not available
   kvm_ok? || sed -i "s/^virt_type.*/virt_type = qemu/" \
-    $BOOTSTRAP_DIR/configs/nova/nova*conf
+    $LSTACK_ROOTFS/root/lstack/configs/nova/nova*conf
 
-  info "Run 'tail -f $LOG_FILE' to follow progress"
-  info "Error messages go to $LOG_FILE.errors"
+  info "Run 'tail -f $LSTACK_LOGFILE' to follow progress"
+  info "Error messages go to $LSTACK_LOGFILE.errors"
   info "Proceeding with the install (will take some time)..."
 
   # Redirect stdout to log file
-  exec > "$LOG_FILE"
-
-  mkdir -p $LXC_ROOTFS/var/lib/lstack/
-  cat > $LXC_ROOTFS/var/lib/lstack/metadata << EOH
+  mkdir -p $LSTACK_ROOTFS/var/lib/lstack/
+  cat > $LSTACK_ROOTFS/var/lib/lstack/metadata << EOH
 HYPERVISOR=$HYPERVISOR
 VGNAME=$LSTACK_NAME-vg
 EOH
 
   # Add the SSH public key to the container so we can SSH into it
-  mkdir -p $LXC_ROOTFS/root/.ssh
-  chmod 0700 $LXC_ROOTFS/root/.ssh
-  cp $CONF_DIR/sshkey.pub $LXC_ROOTFS/root/.ssh/authorized_keys
+  mkdir -p $LSTACK_ROOTFS/root/.ssh
+  chmod 0700 $LSTACK_ROOTFS/root/.ssh
+  cp $LSTACK_CONF_DIR/sshkey.pub $LSTACK_ROOTFS/root/.ssh/authorized_keys
 
-  if ! cexe $LSTACK_NAME "bash $BOOTSTRAP_CDIR/install/install.sh" \
-       2> $LOG_FILE.errors
+  exec > "$LSTACK_LOGFILE"
+  if ! cexe $LSTACK_NAME "bash /root/lstack/install/install.sh" \
+       2> $LSTACK_LOGFILE.errors
   then
     error "Failed to bootstrap OpenStack"
-    error "Tailing the last 5 lines of $LOG_FILE.errors:\n\n"
-    >&2 tail -n5 $LOG_FILE.errors | \
+    error "Tailing the last 5 lines of $LSTACK_LOGFILE.errors:\n\n"
+    >&2 tail -n5 $LSTACK_LOGFILE.errors | \
       sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"
     exit 1
   fi

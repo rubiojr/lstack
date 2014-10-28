@@ -25,7 +25,9 @@ main() {
   else
     export LSTACK_NAME=lstack-$SUDO_USER
   fi
-  export LSTACK_ROOTFS=/var/lib/lxc/$LSTACK_NAME/rootfs
+  export LSTACK_ROOTFS="/var/lib/lxc/$LSTACK_NAME/rootfs"
+  export LSTACK_CONF_DIR="$HOME/.config/lstack"
+  export LSTACK_LOGFILE="/tmp/$LSTACK_NAME.log"
 
   source $BASE_PATH/lib/lstack.sh
   need_pkg "sudo"

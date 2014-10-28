@@ -17,13 +17,8 @@ if ! [ -f "$BASE_PATH/lib/lstack.sh" ]; then
   BASE_PATH=$INSTALL_DIR
 fi
 source $BASE_PATH/lib/dispatch.sh
-source $BASE_PATH/lib/lstack.sh
 
 main() {
-  need_pkg "sudo"
-  need_pkg "lxc"
-  need_pkg "iscsitarget-dkms"
-
   export LC_ALL=en_US.UTF-8
   if [ -z "$SUDO_USER" ]; then
     export LSTACK_NAME=lstack-`whoami`
@@ -31,6 +26,12 @@ main() {
     export LSTACK_NAME=lstack-$SUDO_USER
   fi
   export LSTACK_ROOTFS=/var/lib/lxc/$LSTACK_NAME/rootfs
+
+  source $BASE_PATH/lib/lstack.sh
+  need_pkg "sudo"
+  need_pkg "lxc"
+  need_pkg "iscsitarget-dkms"
+
 
   dispatch lstack "$@"
 }

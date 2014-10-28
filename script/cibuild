@@ -51,6 +51,7 @@ if [ -z "$ssh_ok" ]; then
   exit 1
 fi
 
+lstack nova list | grep test
 #
 # Test 22 port forwarding
 #

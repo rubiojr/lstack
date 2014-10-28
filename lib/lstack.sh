@@ -1,5 +1,7 @@
 #!/bin/bash
 
+BASE_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 info() {
   >&2 echo -e "\e[32m** \e[0m$1"
 }
@@ -143,14 +145,22 @@ needs_root() {
 instance_running?() {
   local name="$1"
 
+  if [ -z "$name" ]; then
+    error "instance_running?: invalid instance name"
+    exit 1
+  fi
+
   source $BASE_PATH/install/creds.sh
-  cexe "$LSTACK_NAME" "nova --os-username $OS_USERNAME \
-                      --os-password=$OS_PASSWORD \
-                      --os-tenant-name $OS_TENANT_NAME \
-                      --os-auth-url $OS_AUTH_URL list" | grep "$name" > /dev/null
+  nova_command "list" | grep "$name" > /dev/null
 }
 
 nova_command() {
+
+  if [ -z "$@" ]; then
+    error "nova_command: no command specified"
+    exit 1
+  fi
+
   source $BASE_PATH/install/creds.sh
   cexe "$LSTACK_NAME" "nova --os-username $OS_USERNAME \
                       --os-password=$OS_PASSWORD \

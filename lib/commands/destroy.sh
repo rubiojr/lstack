@@ -15,6 +15,8 @@ fi
 
 if [ -f $LSTACK_ROOTFS/var/lib/lstack/metadata ]; then
 
+  source $LSTACK_ROOTFS/var/lib/lstack/metadata
+
   if [ -z "$VGNAME" ]; then
     error "VGNAME not set. Invalid metadata info."
     exit 1

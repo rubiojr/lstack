@@ -153,7 +153,7 @@ instance_running?() {
 
 nova_command() {
 
-  if [ -z "$@" ]; then
+  if [ -z "$1" ]; then
     error "nova_command: no command specified"
     exit 1
   fi
@@ -211,4 +211,47 @@ config_get() {
 
   [ -z "$val" ] && val="$default"
   echo $val
+}
+
+glance_command() {
+
+  if [ -z "$1" ]; then
+    error "glance_command: no command specified"
+    exit 1
+  fi
+
+  cexe "$LSTACK_NAME" "glance --os-username=$OS_USERNAME \
+                              --os-password=$OS_PASSWORD \
+                              --os-tenant-name $OS_TENANT_NAME \
+                              --os-auth-url $OS_AUTH_URL \
+                              $@"
+}
+
+glance_import() {
+  local image_file=$1
+  local image_name=$2
+  local image_id=""
+
+  ln -f "$image_file" "$LSTACK_ROOTFS/tmp/$image_name"
+  source $LSTACK_ROOTFS/root/creds.sh
+  image_id=$(glance_command "image-create --name $image_name \
+                                          --is-public true \
+                                          --container-format bare \
+                                          --disk-format qcow2 \
+                                          --file /tmp/$image_name" | \
+                                          grep '\sid\s' | awk '{print $4}')
+
+  echo $image_id
+}
+
+glance_md5() {
+  local image_id=$1
+
+  if [ -z "$1" ]; then
+    error "glance_md5: invalid image id"
+    return 1
+  fi
+
+  source $LSTACK_ROOTFS/root/creds.sh
+  glance_command "image-show $image_id" | grep 'checksum' | awk '{print $4}'
 }

@@ -29,20 +29,14 @@ mkfifo $fifo
 image_name=$(basename "$image")
 
 # hardlink the image to the container
-ln -f "$image" "/var/lib/lxc/$LSTACK_NAME/rootfs/tmp/$image_name"
 info "Importing the image into Glance..."
-glance_md5=$(cexe "$LSTACK_NAME" "glance --os-username=$OS_USERNAME \
-                      --os-password=$OS_PASSWORD \
-                      --os-tenant-name $OS_TENANT_NAME \
-                      --os-auth-url $OS_AUTH_URL \
-                      image-create --name $image_name \
-                      --is-public true \
-                      --container-format bare \
-                      --disk-format qcow2 \
-                      --file /tmp/$image_name" | grep checksum | awk '{print $4}') || {
+__gid=$(glance_import "$image" "$image_name")
+if [ -z "$__gid " ]; then
   error "Error importing the image"
   rm -f "/var/lib/lxc/$LSTACK_NAME/rootfs/tmp/$image_name"
-}
+fi
+
+__gmd5=$(glance_md5 "$__gid")
 
 while true; do
   if read md5 < $fifo; then
@@ -52,9 +46,9 @@ while true; do
 done
 
 rm -f $fifo
-if [ "$md5" = "$glance_md5" ]; then
+if [ "$md5" = "$__gmd5" ]; then
   info "Image imported"
 else
   error "The MD5 of the imported image does not match the source MD5"
+  exit 1
 fi
-

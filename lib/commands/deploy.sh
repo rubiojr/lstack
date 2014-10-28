@@ -22,16 +22,16 @@ main(){
   image_name=$(basename $deploy_file)
 
   source $BASE_PATH/commands/bootstrap.sh -q
-  source $BASE_PATH/commands/importimg.sh "$deploy_file"
+  local gid=$(glance_import "$deploy_file" "$image_name")
 
   info "Deploying $deploy_name..."
   info "Instance name:   $deploy_name"
   info "Instance flavor: $deploy_flavor"
 
   source $BASE_PATH/commands/nova.sh boot \
-                                      --image "$image_name" \
+                                      --image "$gid" \
                                       --flavor $deploy_flavor \
-                                      "$deploy_name"
+                                      "$deploy_name" > /dev/null
 }
 
 columnize() {

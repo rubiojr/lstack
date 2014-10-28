@@ -87,7 +87,7 @@ cexe() {
   if lxc-attach -n "$cname" /bin/true 2>/dev/null; then
     lxc-attach -n "$cname" -- $@
   else
-    ssh_port=$(config_get "lstack.ssh_port") || "22"
+    ssh_port=$(config_get "lstack.ssh_port" "22")
     warn "lxc-attach doesn't work here, trying SSH"
     ip=$(sshable_ip $cname)
     if [ -z "$ip" ]; then
@@ -119,7 +119,7 @@ sshable_ip() {
     error "Container IP not found"
     echo ""
   fi
-  ssh_port=$(config_get "lstack.ssh_port") || "22"
+  ssh_port=$(config_get "lstack.ssh_port" "22")
   for ip in $ips; do
     ssh -q -o StrictHostKeyChecking=no \
         -p "$ssh_port" \

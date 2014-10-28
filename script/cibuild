@@ -58,7 +58,7 @@ echo "** Testing TCP/22 forwarding..."
 ip=$(lstack ip)
 lstack forward test 22
 # may not be ready, retry
-read -r ssh_ok < /dev/tcp/$ip/22 2> /dev/null || {
+read -r ssh_ok < /dev/tcp/$ip/22 || {
   sleep 2
   read -r ssh_ok < /dev/tcp/$ip/22
 }

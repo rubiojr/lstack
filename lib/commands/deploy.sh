@@ -30,10 +30,23 @@ main(){
   info "Instance name:   $deploy_name"
   info "Instance flavor: $deploy_flavor"
 
-  source $BASE_PATH/commands/nova.sh boot \
-                                      --image "$gid" \
-                                      --flavor $deploy_flavor \
-                                      "$deploy_name" > /dev/null
+  if [ -z "$deploy_volume" ]; then
+    source $BASE_PATH/commands/nova.sh boot \
+                                        --image "$gid" \
+                                        --flavor $deploy_flavor \
+                                        "$deploy_name" > /dev/null
+  else
+    __volid=$(cinder_create "10")
+    if [ -z "$__volid" ]; then
+      error "Could not create the Cinder volume!"
+      exit 1
+    fi
+    source $BASE_PATH/commands/nova.sh boot \
+                                        --image "$gid" \
+                                        --block-device source=volume,id=__volid,dest=volume,shutdown=preserve \
+                                        --flavor $deploy_flavor \
+                                        "$deploy_name" > /dev/null
+  fi
 }
 
 columnize() {
@@ -56,10 +69,12 @@ needs_root
 deploy_name=lstack-$(date +%s)
 deploy_flavor="m1.tiny"
 deploy_file=
+deploy_volume=
 
 deploy_option_name()   ( deploy_name="$1"; shift; dispatch deploy "$@" )
 deploy_option_flavor() ( deploy_flavor="$1"; shift; dispatch deploy "$@" )
 deploy_option_file()   ( deploy_file="$1"; shift; dispatch deploy "$@" )
+deploy_option_volume() ( deploy_volume="$1"; shift; dispatch deploy "$@" )
 deploy_option_help()   ( usage; )
 deploy_command_help()  ( usage; )
 deploy_ () ( main )

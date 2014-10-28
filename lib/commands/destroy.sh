@@ -4,10 +4,11 @@ set -e
 BASE_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" && pwd )"
 CMD_PATH="${BASH_SOURCE[0]}"
 source $BASE_PATH/lstack.sh
-source /var/lib/lxc/$LSTACK_NAME/rootfs/var/lib/lstack/metadata
 
 check_distro
 needs_root
+
+source /var/lib/lxc/$LSTACK_NAME/rootfs/var/lib/lstack/metadata
 
 if [ -z "$LSTACK_NAME" ]; then
   error "LSTACK_NAME not set. That should not happen."

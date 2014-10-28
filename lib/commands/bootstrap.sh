@@ -22,7 +22,12 @@ mkdir -p $CONF_DIR
 
 found=$(lxc-ls -1 | grep $LSTACK_NAME) || true
 if [ -n "$found" ]; then
-  [ "$1" = "-q" ] || warn "Container already running."
+  if lxc-info -n $LSTACK_NAME | grep RUNNING; then
+    [ "$1" = "-q" ] || warn "Container already running."
+  else
+    error "Container has been created but it's currently stopped"
+    error "Run 'sudo lxc-start -n $LSTACK_NAME -d' to start it first"
+  fi
 else
 
   debug "Using Ubuntu mirror: $UBUNTU_MIRROR"

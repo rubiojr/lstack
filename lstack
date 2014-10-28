@@ -25,7 +25,11 @@ main() {
   need_pkg "iscsitarget-dkms"
 
   export LC_ALL=en_US.UTF-8
-  export LSTACK_NAME=lstack-`whoami`
+  if [ -z "$SUDO_USER" ]; then
+    export LSTACK_NAME=lstack-`whoami`
+  else
+    export LSTACK_NAME=lstack-$SUDO_USER
+  fi
 
   dispatch lstack "$@"
 }

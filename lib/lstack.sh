@@ -158,7 +158,7 @@ nova_command() {
     exit 1
   fi
 
-  source $LSTACK_ROOTFS/root/$creds
+  source $LSTACK_ROOTFS/root/creds.sh
   cexe "$LSTACK_NAME" "nova --os-username $OS_USERNAME \
                       --os-password=$OS_PASSWORD \
                       --os-tenant-name $OS_TENANT_NAME \

@@ -21,8 +21,8 @@ destroy_vg(){
     return 1
   fi
 
-  # If the container was not fully provisioned vgrename may not be there
-  cexe "$LSTACK_NAME" "which vgremove" > /dev/null && return 0
+  # If the container was not fully provisioned vgremove may not be there
+  cexe "$LSTACK_NAME" "which vgremove" > /dev/null || return 0
 
   debug "Removing the LVM volume"
   # try to remove the volume group only if it's there
@@ -40,7 +40,8 @@ cleanup_loopdev() {
   fi
 
   debug "Cleanup the loop device"
-  losetup -a | grep -q $loopdev 2>/dev/null && return 0
+  # if the loop device isn't found we don't need to delete it
+  losetup -a | grep -q $loopdev 2>/dev/null || return 0
 
   losetup -d $loopdev || {
     error "Could not cleanup loop device. Aborting."
@@ -63,9 +64,11 @@ if [ -f $LSTACK_ROOTFS/var/lib/lstack/metadata ]; then
   fi
 
   if [ -f $LSTACK_ROOTFS/root/creds.sh ]; then
+    debug "Destroying instances"
     destroy_instances
-    destroy_vg $VGNAME
-    cleanup_loopdev $LOOPDEV
+    debug "Detroy the volume group $VGNAME"
+    destroy_vg "$VGNAME"
+    cleanup_loopdev "$LOOPDEV"
   fi
 
 else

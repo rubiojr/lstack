@@ -300,13 +300,18 @@ destroy_instances() {
   # We need to do this in case images have volumes attached
   # otherwise we can't destroy the volume group.
   info "Destroying all the instances (if any)..."
-  for instance in $(nova_command "list" | grep -v ID | awk '{print $2}' | xargs)
-  do
+  local instances=$(nova_command "list" | grep -v ID | awk '{print $2}' | xargs)
+
+  # no instances, return
+  [ -z "$instances" ] && return 0
+
+  for instance in $instances; do
     nova_command "delete $instance"
   done
+
   # Wait till all of the instances have been destroyed
   for i in $(seq 1 10); do
-    lines=$(nova_command "list" | wc -l)
+    lines=$(nova_command "list" | wc -l) || true
     # when there are only 4 lines in the output the table is empty, so we can
     # safely leave the loop
     [ "$lines" = "4" ] && break

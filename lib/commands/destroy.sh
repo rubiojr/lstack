@@ -31,6 +31,23 @@ if [ -f $LSTACK_ROOTFS/var/lib/lstack/metadata ]; then
     wait_for_container_ip
   fi
 
+  # We need to do this in case images have volumes attached
+  # otherwise we can't destroy the volume group.
+  info "Destroying all the instances (if any)..."
+  for instance in $(nova_command "list" | grep -v ID | awk '{print $2}' | xargs)
+  do
+    nova_command "delete $instance"
+  done
+  # Wait till all of the instances have been destroyed
+  for i in $(seq 1 10); do
+    lines=$(nova_command "list" | wc -l)
+    # when there are only 4 lines in the output the table is empty, so we can
+    # safely leave the loop
+    [ "$lines" = "4" ] && break
+
+    sleep 5
+  done
+
   # If the container was not fully provisioned vgrename may not be there
   if cexe "$LSTACK_NAME" "which vgremove" > /dev/null; then
     debug "Removing the LVM volume"

@@ -22,7 +22,7 @@ mkdir -p $CONF_DIR
 
 found=$(lxc-ls -1 | grep $LSTACK_NAME) || true
 if [ -n "$found" ]; then
-  if lxc-info -n $LSTACK_NAME | grep RUNNING; then
+  if lxc-info -n $LSTACK_NAME | grep RUNNING >/dev/null; then
     [ "$1" = "-q" ] || warn "Container already running."
   else
     error "Container has been created but it's currently stopped"

@@ -169,6 +169,11 @@ nova_command() {
     exit 1
   fi
 
+  if ! [ -f $LSTACK_ROOTFS/root/creds.sh ]; then
+    error "nova_command: OpenStack credentials not found!"
+    return 1
+  fi
+
   source $LSTACK_ROOTFS/root/creds.sh
   cexe "$LSTACK_NAME" "nova --os-username $OS_USERNAME \
                       --os-password=$OS_PASSWORD \
@@ -289,4 +294,23 @@ cinder_create() {
   vol_id=$(cinder_command "create $size" | grep '\sid\s' | awk '{print $4}')
 
   echo $vol_id
+}
+
+destroy_instances() {
+  # We need to do this in case images have volumes attached
+  # otherwise we can't destroy the volume group.
+  info "Destroying all the instances (if any)..."
+  for instance in $(nova_command "list" | grep -v ID | awk '{print $2}' | xargs)
+  do
+    nova_command "delete $instance"
+  done
+  # Wait till all of the instances have been destroyed
+  for i in $(seq 1 10); do
+    lines=$(nova_command "list" | wc -l)
+    # when there are only 4 lines in the output the table is empty, so we can
+    # safely leave the loop
+    [ "$lines" = "4" ] && break
+
+    sleep 5
+  done
 }

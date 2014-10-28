@@ -8,19 +8,50 @@ source $BASE_PATH/lstack.sh
 check_distro
 needs_root
 
-if [ -z "$LSTACK_NAME" ]; then
-  error "LSTACK_NAME not set. That should not happen."
+if ! lxc-info -n "$LSTACK_NAME" >/dev/null 2>&1; then
+  error "$LSTACK_NAME container not available"
   exit 1
 fi
 
+destroy_vg(){
+  local vg_name=$1
+
+  if [ -z "$vg_name" ]; then
+    error "destroy_vg: invalid parameter"
+    return 1
+  fi
+
+  # If the container was not fully provisioned vgrename may not be there
+  cexe "$LSTACK_NAME" "which vgremove" > /dev/null && return 0
+
+  debug "Removing the LVM volume"
+  # try to remove the volume group only if it's there
+  if cexe "$LSTACK_NAME" "vgdisplay $vg_name" > /dev/null 2>&1; then
+    cexe "$LSTACK_NAME" "vgremove -f $vg_name" > /dev/null 2>&1
+  fi
+}
+
+cleanup_loopdev() {
+  local loopdev=$1
+
+  if [ -z "$loopdev" ]; then
+    error "cleanup_loopdev: invalid parameter"
+    return 1
+  fi
+
+  debug "Cleanup the loop device"
+  losetup -a | grep -q $loopdev 2>/dev/null && return 0
+
+  losetup -d $loopdev || {
+    error "Could not cleanup loop device. Aborting."
+    return 1
+  }
+}
+
+# If the provisioning was interrupted, the metadata file may not be there
 if [ -f $LSTACK_ROOTFS/var/lib/lstack/metadata ]; then
 
   source $LSTACK_ROOTFS/var/lib/lstack/metadata
-
-  if [ -z "$VGNAME" ]; then
-    error "VGNAME not set. Invalid metadata info."
-    exit 1
-  fi
 
   # FIXME: not sure if this is actually required
   # If the container is stopped, we need to boot it to clean the
@@ -31,45 +62,14 @@ if [ -f $LSTACK_ROOTFS/var/lib/lstack/metadata ]; then
     wait_for_container_ip
   fi
 
-  # We need to do this in case images have volumes attached
-  # otherwise we can't destroy the volume group.
-  info "Destroying all the instances (if any)..."
-  for instance in $(nova_command "list" | grep -v ID | awk '{print $2}' | xargs)
-  do
-    nova_command "delete $instance"
-  done
-  # Wait till all of the instances have been destroyed
-  for i in $(seq 1 10); do
-    lines=$(nova_command "list" | wc -l)
-    # when there are only 4 lines in the output the table is empty, so we can
-    # safely leave the loop
-    [ "$lines" = "4" ] && break
-
-    sleep 5
-  done
-
-  # If the container was not fully provisioned vgrename may not be there
-  if cexe "$LSTACK_NAME" "which vgremove" > /dev/null; then
-    debug "Removing the LVM volume"
-    # try to remove the volume group only if it's there
-    if cexe "$LSTACK_NAME" "vgdisplay $VGNAME" > /dev/null 2>&1; then
-      cexe "$LSTACK_NAME" "vgremove -f $VGNAME" > /dev/null 2>&1
-    fi
-  fi
-
-  debug "Cleanup the loop device"
-  if losetup -a | grep -q $LOOPDEV 2>/dev/null; then
-    losetup -d $LOOPDEV || {
-      warn "Failed to detach the file from the loop device, retrying..."
-      sleep 2; losetup -d $LOOPDEV || {
-        error "Could not cleanup loop device. Aborting."
-        exit 1
-      }
-    }
+  if [ -f $LSTACK_ROOTFS/root/creds.sh ]; then
+    destroy_instances
+    destroy_vg $VGNAME
+    cleanup_loopdev $LOOPDEV
   fi
 
 else
-  warn "Metadata file not found. Imcomplete bootstrap process."
+  warn "Metadata file not found. Incomplete bootstrap process?"
 fi
 
 info "Destroying the container..."

@@ -4,8 +4,9 @@ set -e
 BASE_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" && pwd )"
 CMD_PATH="${BASH_SOURCE[0]}"
 source $BASE_PATH/lstack.sh
-
 instance="$1"
+
+needs_root
 
 instance_running? "$instance" || {
   error "Instance $instance is not running"

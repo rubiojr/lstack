@@ -14,8 +14,8 @@ instance_running? "$instance" || {
 }
 
 shift
-ip=$(instance_ip "$instance")
-if [ -z "$ip" ]; then
+
+if [ -z "$(instance_ip $instance)" ]; then
   error "Could not find instance $instance private IP"
   exit 1
 fi
@@ -48,7 +48,7 @@ service $port
   wait = no
   user = root
   port = $port
-  redirect = $ip $port
+  redirect = $(instance_ip $instance) $port
 }
 EOF
 

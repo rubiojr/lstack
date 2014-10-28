@@ -158,8 +158,7 @@ nova_command() {
     exit 1
   fi
 
-  local creds="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/install/creds.sh"
-  source $creds
+  source $LSTACK_ROOTFS/root/$creds
   cexe "$LSTACK_NAME" "nova --os-username $OS_USERNAME \
                       --os-password=$OS_PASSWORD \
                       --os-tenant-name $OS_TENANT_NAME \

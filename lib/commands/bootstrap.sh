@@ -10,6 +10,21 @@ source $BASE_PATH/lstack.sh
 check_distro
 needs_root
 
+install() {
+  exec > "$LSTACK_LOGFILE"
+  if ! cexe $LSTACK_NAME "bash /root/lstack/install/install.sh" \
+       2> $LSTACK_LOGFILE.errors
+  then
+    error "Failed to bootstrap OpenStack"
+    error "Tailing the last 5 lines of $LSTACK_LOGFILE.errors:\n\n"
+    >&2 tail -n5 $LSTACK_LOGFILE.errors | \
+      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"
+    exit 1
+  else
+    info "Done!"
+  fi
+}
+
 mkdir -p $LSTACK_CONF_DIR
 [ -f $LSTACK_CONF_DIR/sshkey ] || {
   info "Creating container SSH keypair"
@@ -86,16 +101,10 @@ EOH
   chmod 0700 $LSTACK_ROOTFS/root/.ssh
   cp $LSTACK_CONF_DIR/sshkey.pub $LSTACK_ROOTFS/root/.ssh/authorized_keys
 
-  exec > "$LSTACK_LOGFILE"
-  if ! cexe $LSTACK_NAME "bash /root/lstack/install/install.sh" \
-       2> $LSTACK_LOGFILE.errors
-  then
-    error "Failed to bootstrap OpenStack"
-    error "Tailing the last 5 lines of $LSTACK_LOGFILE.errors:\n\n"
-    >&2 tail -n5 $LSTACK_LOGFILE.errors | \
-      sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"
-    exit 1
+  if [ -n "$LSTACK_QUIET" ] || [ -n "$LSTACK_NONYANCAT" ]; then
+    install
   else
-    info "Done!"
+    install &
+    source $BASE_PATH/nyancat.sh $!
   fi
 fi

@@ -13,6 +13,7 @@ columnize "--help",         "Print help"
 columnize "--version",      "Print version"
 columnize "--nocolor",      "No colors for the output"
 columnize "--quiet",        "Do not print info and warning messages"
+columnize "--nonyancat",    "Nooooooo!"
 echo
 echo "COMMANDS"
 echo

@@ -38,21 +38,22 @@ main() {
   dispatch lstack "$@"
 }
 
-lstack_command_bootstrap()     ( source $BASE_PATH/lib/commands/bootstrap.sh )
-lstack_command_destroy()       ( source $BASE_PATH/lib/commands/destroy.sh )
-lstack_command_nova()          ( source $BASE_PATH/lib/commands/nova.sh )
-lstack_command_ssh()           ( source $BASE_PATH/lib/commands/ssh.sh )
-lstack_command_help()          ( source $BASE_PATH/lib/commands/help.sh )
-lstack_command_info()          ( source $BASE_PATH/lib/commands/info.sh )
-lstack_command_ip()            ( source $BASE_PATH/lib/commands/ip.sh)
-lstack_command_importimg()     ( source $BASE_PATH/lib/commands/importimg.sh )
-lstack_command_deploy()        ( source $BASE_PATH/lib/commands/deploy.sh )
-lstack_command_forward()       ( source $BASE_PATH/lib/commands/forward.sh )
+lstack_command_bootstrap()   ( source $BASE_PATH/lib/commands/bootstrap.sh )
+lstack_command_destroy()     ( source $BASE_PATH/lib/commands/destroy.sh )
+lstack_command_nova()        ( source $BASE_PATH/lib/commands/nova.sh )
+lstack_command_ssh()         ( source $BASE_PATH/lib/commands/ssh.sh )
+lstack_command_help()        ( source $BASE_PATH/lib/commands/help.sh )
+lstack_command_info()        ( source $BASE_PATH/lib/commands/info.sh )
+lstack_command_ip()          ( source $BASE_PATH/lib/commands/ip.sh)
+lstack_command_importimg()   ( source $BASE_PATH/lib/commands/importimg.sh )
+lstack_command_deploy()      ( source $BASE_PATH/lib/commands/deploy.sh )
+lstack_command_forward()     ( source $BASE_PATH/lib/commands/forward.sh )
 
-lstack_option_help()    ( source $BASE_PATH/lib/commands/help.sh )
-lstack_option_version() ( echo lstack v$LSTACK_VERSION )
-lstack_option_nocolor() ( export LSTACK_NOCOLOR=1; dispatch lstack "$@" )
-lstack_option_quiet()   ( export LSTACK_QUIET=1; dispatch lstack "$@" )
-lstack_ ()              ( source $BASE_PATH/lib/commands/help.sh )
+lstack_option_help()         ( source $BASE_PATH/lib/commands/help.sh )
+lstack_option_version()      ( echo lstack v$LSTACK_VERSION )
+lstack_option_nocolor()      ( export LSTACK_NOCOLOR=1; dispatch lstack "$@" )
+lstack_option_quiet()        ( export LSTACK_QUIET=1; dispatch lstack "$@" )
+lstack_option_nonyancat()    ( export LSTACK_NONYANCAT=1; dispatch lstack "$@" )
+lstack_ ()                   ( source $BASE_PATH/lib/commands/help.sh )
 
 main $@

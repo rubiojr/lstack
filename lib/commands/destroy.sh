@@ -41,7 +41,7 @@ if [ -f $LSTACK_ROOTFS/var/lib/lstack/metadata ]; then
   fi
 
   debug "Cleanup the loop device"
-  if losetup -a | grep -q $LOOPDEV; then
+  if losetup -a | grep -q $LOOPDEV 2>/dev/null; then
     losetup -d $LOOPDEV || {
       warn "Failed to detach the file from the loop device, retrying..."
       sleep 2; losetup -d $LOOPDEV || {

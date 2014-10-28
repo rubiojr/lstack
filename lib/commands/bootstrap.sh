@@ -95,7 +95,7 @@ EOH
     >&2 tail -n5 $LSTACK_LOGFILE.errors | \
       sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"
     exit 1
+  else
+    info "Done!"
   fi
-
-  info "Done!"
 fi

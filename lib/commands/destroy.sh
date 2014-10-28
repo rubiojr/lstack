@@ -4,7 +4,7 @@ set -e
 BASE_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" && pwd )"
 CMD_PATH="${BASH_SOURCE[0]}"
 source $BASE_PATH/lstack.sh
-source /var/lib/lxc/$LSTACK_NAME/root/lstack/lib/metadata
+source /var/lib/lxc/$LSTACK_NAME/rootfs/var/lib/lstack/metadata
 
 check_distro
 needs_root

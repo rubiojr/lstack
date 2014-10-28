@@ -4,7 +4,7 @@ set -e
 BASE_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 export DEBIAN_FRONTEND=noninteractive
 
-source $BASE_PATH/../metadata
+source /var/lib/lstack/metadata
 source $BASE_PATH/../lstack.sh
 
 HYPERVISOR=${HYPERVISOR:-qemu}
@@ -91,7 +91,7 @@ losetup $loopdev /$VGNAME || {
   }
 }
 # Save the loop dev for later cleanup
-echo "LOOPDEV=$loopdev" >> $BASE_PATH/../metadata
+echo "LOOPDEV=$loopdev" >> /var/lib/lstack/metadata
 
 pvcreate $loopdev
 vgcreate $VGNAME $loopdev

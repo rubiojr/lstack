@@ -77,7 +77,8 @@ else
   # Redirect stdout to log file
   exec > "$LOG_FILE"
 
-  cat > $BOOTSTRAP_DIR/metadata << EOH
+  mkdir -p $LXC_ROOTFS/var/lib/lstack/
+  cat > $LXC_ROOTFS/var/lib/lstack/metadata << EOH
 HYPERVISOR=$HYPERVISOR
 VGNAME=$LSTACK_NAME-vg
 EOH

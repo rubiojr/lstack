@@ -45,16 +45,13 @@ LINES_PER_IMG=$(( $(echo $IMGS[0] | sed 's/\\n/\n/g' | wc -l) + 1 ))
 tput_loop() { for((x=0; x < $LINES_PER_IMG; x++)); do tput $1; done; }
 
 # ^C abort, script cleanup
-trap sigtrap INT
-sigtrap() {
+trap finish INT
+finish() {
   # make cursor visible again
   tput cvvis
 
   # reset cursor
   tput_loop "cud1"
-
-  echo "caught signal SIGINT(CTRL+C), quitting ..."
-  exit 1
 }
 
 # need multi-space strings
@@ -69,6 +66,6 @@ while [ "$(ps a | awk '{print $1}' | grep $1)" ]; do for x in "${IMGS[@]}"; do
     tput_loop "cuu1"
     sleep $REFRESH
 done; done
-sigtrap
+finish
 
 # will never reach here, CTRL+C is required to quit

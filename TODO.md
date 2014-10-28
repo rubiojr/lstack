@@ -17,6 +17,7 @@
 * Unprivileged containers?
 * Custom name for the container (hardcoded to lstack now)
 * Forward command to forward container ports to the instances
+* Add option to force bootstrap destroying the previous container
 
 ## Tests
 

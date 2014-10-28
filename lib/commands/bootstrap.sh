@@ -44,7 +44,6 @@ else
   # Enable KVM support
   if check_kvm_reqs; then
     # /dev/kvm support
-    info "KVM acceleration available"
     lxc_config_set $LSTACK_NAME "lxc.cgroup.devices.allow = c 10:232 rwm"
     HYPERVISOR=kvm
   else

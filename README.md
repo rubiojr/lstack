@@ -30,6 +30,8 @@ OPTIONS
 
 --help                Print help
 --version             Print version
+--nocolor             No colors for the output
+--quiet               Do not print info and warning messages
 
 COMMANDS
 
@@ -41,6 +43,7 @@ destroy               Destroy the container
 ip                    Print the IP of the container
 importimg             Import a QCOW2 image to Glance
 deploy                Create an instance from a QCOW2 image
+forward               Forward ports to a running intsance
 
 ```
 

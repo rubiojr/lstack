@@ -169,8 +169,8 @@ nova_command() {
 instance_ip() {
   local name=$1
 
-  ip=$(nova_command "list" | grep "$name" | \
-            grep -o "private=.*\s" | cut -d= -f2 | tr -d ' ') || true
+  nova_command "list" | grep "$name" | \
+               grep -o "private=.*\s" | cut -d= -f2 | tr -d ' '
 }
 
 config_set() {

@@ -7,7 +7,6 @@ CMD_PATH="${BASH_SOURCE[0]}"
 source $BASE_PATH/lstack.sh
 source $BASE_PATH/install/creds.sh
 image=$1
-cname=lstack
 
 needs_root
 
@@ -30,9 +29,9 @@ mkfifo $fifo
 image_name=$(basename "$image")
 
 # hardlink the image to the container
-ln -f "$image" "/var/lib/lxc/$cname/rootfs/tmp/$image_name"
+ln -f "$image" "/var/lib/lxc/$LSTACK_NAME/rootfs/tmp/$image_name"
 info "Importing the image into Glance..."
-glance_md5=$(cexe "$cname" "glance --os-username=$OS_USERNAME \
+glance_md5=$(cexe "$LSTACK_NAME" "glance --os-username=$OS_USERNAME \
                       --os-password=$OS_PASSWORD \
                       --os-tenant-name $OS_TENANT_NAME \
                       --os-auth-url $OS_AUTH_URL \
@@ -42,7 +41,7 @@ glance_md5=$(cexe "$cname" "glance --os-username=$OS_USERNAME \
                       --disk-format qcow2 \
                       --file /tmp/$image_name" | grep checksum | awk '{print $4}') || {
   error "Error importing the image"
-  rm -f "/var/lib/lxc/$cname/rootfs/tmp/$image_name"
+  rm -f "/var/lib/lxc/$LSTACK_NAME/rootfs/tmp/$image_name"
 }
 
 while true; do

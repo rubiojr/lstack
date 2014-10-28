@@ -7,10 +7,10 @@ source $BASE_PATH/lstack.sh
 
 needs_root
 
-lxc-ls --running -1 | grep lstack > /dev/null || {
-  error "Container 'lstack' not running"
+lxc-ls --running -1 | grep $LSTACK_NAME > /dev/null || {
+  error "Container '$LSTACK_NAME' not running"
   exit 1
 }
 
 info "Retrieving container info"
-lxc-info -n lstack
+lxc-info -n $LSTACK_NAME

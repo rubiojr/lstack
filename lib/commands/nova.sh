@@ -8,7 +8,7 @@ source $BASE_PATH/install/creds.sh
 
 needs_root
 
-cexe "lstack" "nova --os-username $OS_USERNAME \
+cexe "$LSTACK_NAME" "nova --os-username $OS_USERNAME \
                     --os-password=$OS_PASSWORD \
                     --os-tenant-name $OS_TENANT_NAME \
                     --os-auth-url $OS_AUTH_URL $@"

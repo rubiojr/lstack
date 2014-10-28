@@ -3,12 +3,9 @@ set -e
 
 BASE_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" && pwd )"
 CMD_PATH="${BASH_SOURCE[0]}"
-LXC_NAME=lstack
-LXC_ROOTFS=/var/lib/lxc/$LXC_NAME/rootfs
-LOG_FILE=/tmp/${LXC_NAME}.log
+LXC_ROOTFS=/var/lib/lxc/$LSTACK_NAME/rootfs
+LOG_FILE=/tmp/${LSTACK_NAME}.log
 UBUNTU_MIRROR=${UBUNTU_MIRROR:-archive.ubuntu.com}
-INSTALL_DIR=/usr/share/lstack
-export LC_ALL=en_US.UTF-8
 BOOTSTRAP_DIR=$LXC_ROOTFS/root/lstack
 BOOTSTRAP_CDIR=/root/lstack/
 CONF_DIR=$HOME/.config/lstack
@@ -23,7 +20,7 @@ mkdir -p $CONF_DIR
   echo y | ssh-keygen -f $CONF_DIR/sshkey -N "" -C lstack-key -q
 }
 
-found=$(lxc-ls -1 | grep lstack) || true
+found=$(lxc-ls -1 | grep $LSTACK_NAME) || true
 if [ -n "$found" ]; then
   [ "$1" = "-q" ] || warn "Container already running."
 else
@@ -37,36 +34,36 @@ else
   modprobe iscsi_trgt
 
   info "Creating the LXC container"
-  quiet "lxc-create -n $LXC_NAME -t ubuntu -- -r precise --mirror http://$UBUNTU_MIRROR/ubuntu"
+  quiet "lxc-create -n $LSTACK_NAME -t ubuntu -- -r precise --mirror http://$UBUNTU_MIRROR/ubuntu"
 
   # Enable KVM support
   if check_kvm_reqs; then
     # /dev/kvm support
     info "KVM acceleration available"
-    lxc_config_set $LXC_NAME "lxc.cgroup.devices.allow = c 10:232 rwm"
+    lxc_config_set $LSTACK_NAME "lxc.cgroup.devices.allow = c 10:232 rwm"
     HYPERVISOR=kvm
   else
     warn "No KVM acceleration support detected, using QEMU (bad performance)."
   fi
 
   # /dev/net/tun support
-  lxc_config_set $LXC_NAME "lxc.cgroup.devices.allow = c 10:200 rwm"
-  lxc_config_set $LXC_NAME "lxc.cgroup.devices.allow = b 7:* rwm"
+  lxc_config_set $LSTACK_NAME "lxc.cgroup.devices.allow = c 10:200 rwm"
+  lxc_config_set $LSTACK_NAME "lxc.cgroup.devices.allow = b 7:* rwm"
 
   # lvm support inside the container
-  lxc_config_set $LXC_NAME "lxc.cgroup.devices.allow = c 10:236 rwm"
-  lxc_config_set $LXC_NAME "lxc.cgroup.devices.allow = b 252:* rwm"
+  lxc_config_set $LSTACK_NAME "lxc.cgroup.devices.allow = c 10:236 rwm"
+  lxc_config_set $LSTACK_NAME "lxc.cgroup.devices.allow = b 252:* rwm"
 
   # /dev/loop* for loop mounting
-  lxc_config_set $LXC_NAME "lxc.cgroup.devices.allow = b 7:* rwm"
-  lxc_config_set $LXC_NAME "lxc.cgroup.devices.allow = c 10:237 rwm"
+  lxc_config_set $LSTACK_NAME "lxc.cgroup.devices.allow = b 7:* rwm"
+  lxc_config_set $LSTACK_NAME "lxc.cgroup.devices.allow = c 10:237 rwm"
 
-  lxc-start -n $LXC_NAME -d
+  lxc-start -n $LSTACK_NAME -d
 
   info "Waiting for the container to get an IP..."
-  wait_for_container_ip $LXC_NAME
+  wait_for_container_ip $LSTACK_NAME
 
-  mkdir $LXC_ROOTFS/$LXC_NAME
+  mkdir $LXC_ROOTFS/$LSTACK_NAME
   cp -r $BASE_PATH/ $BOOTSTRAP_DIR
 
   # Disable KVM support if not available
@@ -89,7 +86,7 @@ EOH
   chmod 0700 $LXC_ROOTFS/root/.ssh
   cp $CONF_DIR/sshkey.pub $LXC_ROOTFS/root/.ssh/authorized_keys
 
-  if ! cexe $LXC_NAME "bash $BOOTSTRAP_CDIR/install/install.sh" \
+  if ! cexe $LSTACK_NAME "bash $BOOTSTRAP_CDIR/install/install.sh" \
        2> $LOG_FILE.errors
   then
     error "Failed to bootstrap OpenStack"

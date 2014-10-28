@@ -24,6 +24,9 @@ main() {
   need_pkg "lxc"
   need_pkg "iscsitarget-dkms"
 
+  export LC_ALL=en_US.UTF-8
+  export LSTACK_NAME=lstack-`whoami`
+
   dispatch lstack "$@"
 }
 

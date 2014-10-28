@@ -13,18 +13,18 @@ needs_root
 # FIXME: not sure if this is actually required
 # If the container is stopped, we need to boot it to clean the
 # volume group and the loop device.
-if lxc-info -n lstack | grep STOPPED >/dev/null; then
+if lxc-info -n $LSTACK_NAME | grep STOPPED >/dev/null; then
   warn "Container stopped. Booting it to clean it up."
-  lxc-start -n lstack -d
+  lxc-start -n $LSTACK_NAME -d
   wait_for_container_ip
 fi
 
 # If the container was not fully provisioned vgrename may not be there
-if cexe "lstack" "which vgremove" > /dev/null; then
+if cexe "$LSTACK_NAME" "which vgremove" > /dev/null; then
   debug "Removing the LVM volume"
   # try to remove the volume group only if it's there
-  if cexe "lstack" "vgdisplay $volume_name" > /dev/null 2>&1; then
-    cexe "lstack" "vgremove -f $volume_name" > /dev/null 2>&1
+  if cexe "$LSTACK_NAME" "vgdisplay $volume_name" > /dev/null 2>&1; then
+    cexe "$LSTACK_NAME" "vgremove -f $volume_name" > /dev/null 2>&1
   fi
 fi
 
@@ -40,4 +40,4 @@ if losetup -a | grep -q $loopdev; then
 fi
 
 info "Destroying the container..."
-lxc-destroy -n lstack -f
+lxc-destroy -n $LSTACK_NAME -f

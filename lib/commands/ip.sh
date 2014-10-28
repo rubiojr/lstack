@@ -7,7 +7,7 @@ source $BASE_PATH/lstack.sh
 
 needs_root
 
-ips=$(lxc-info -i -n lstack | cut -d' ' -f2- | tac | xargs ) || true
+ips=$(lxc-info -i -n $LSTACK_NAME | cut -d' ' -f2- | tac | xargs ) || true
 if [ -z "$ips" ]; then
   error "Container IP not found"
   exit 1

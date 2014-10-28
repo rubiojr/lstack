@@ -7,12 +7,12 @@ source $BASE_PATH/lstack.sh
 
 needs_root
 
-lxc-ls --running -1 | grep lstack > /dev/null || {
-  error "Container 'lstack' not running"
+lxc-ls --running -1 | grep $LSTACK_NAME > /dev/null || {
+  error "Container '$LSTACK_NAME' not running"
   exit 1
 }
 
-ips=$(lxc-info -i -n lstack | cut -d' ' -f2- | tac | xargs ) || true
+ips=$(lxc-info -i -n $LSTACK_NAME | cut -d' ' -f2- | tac | xargs ) || true
 if [ -z "$ips" ]; then
   error "Container IP not found"
   exit 1

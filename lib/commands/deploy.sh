@@ -22,6 +22,8 @@ main(){
   image_name=$(basename $deploy_file)
 
   source $BASE_PATH/commands/bootstrap.sh -q
+
+  info "Importing the image (may take some time)..."
   local gid=$(glance_import "$deploy_file" "$image_name")
 
   info "Deploying $deploy_name..."

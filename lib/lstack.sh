@@ -150,9 +150,19 @@ instance_running?() {
                       --os-auth-url $OS_AUTH_URL list" | grep "$name" > /dev/null
 }
 
+nova_command() {
+  source $BASE_PATH/install/creds.sh
+  cexe "$LSTACK_NAME" "nova --os-username $OS_USERNAME \
+                      --os-password=$OS_PASSWORD \
+                      --os-tenant-name $OS_TENANT_NAME \
+                      --os-auth-url $OS_AUTH_URL $@"
+}
+
 instance_ip() {
-  echo $(cexe "$LSTACK_NAME" "nova list" |grep -o "private=.*\s" | cut -d= -f2 | tr -d ' ')
-  ip=$(cexe "$LSTACK_NAME" "nova list" |grep -o "private=.*\s" | cut -d= -f2 | tr -d ' ') || true
+  local name=$1
+
+  ip=$(nova_command "list" | grep "$name" | \
+            grep -o "private=.*\s" | cut -d= -f2 | tr -d ' ') || true
 }
 
 config_set() {

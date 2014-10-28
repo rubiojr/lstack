@@ -12,11 +12,11 @@ color()  {
 }
 
 info() {
-  green "INFO: $1"
+  [ -z "$LSTACK_QUIET" ] && green "INFO: $1"
 }
 
 warn() {
-  yellow "WARN: $1"
+  [ -z "$LSTACK_QUIET" ] && yellow "WARN: $1"
 }
 
 error() {

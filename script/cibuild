@@ -13,7 +13,7 @@ cleanup() {
 trap "cleanup" EXIT
 
 echo "** Testing bootstrap..."
-lstack bootstrap
+lstack --nonyancat bootstrap
 
 # Wait for the instance to boot
 echo "** Testing the Cirros instance booted..."

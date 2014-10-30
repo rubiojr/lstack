@@ -4,7 +4,7 @@ set -e
 BASE_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" && pwd )"
 
 lstack() {
-  $BASE_PATH/lstack $@
+  $BASE_PATH/lstack --quiet $@
 }
 
 cleanup() {
@@ -13,7 +13,7 @@ cleanup() {
 trap "cleanup" EXIT
 
 echo "** Testing bootstrap..."
-lstack --nonyancat bootstrap
+lstack bootstrap
 
 # Wait for the instance to boot
 echo "** Testing the Cirros instance booted..."

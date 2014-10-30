@@ -22,6 +22,9 @@ install() {
     exit 1
   else
     info "Done!"
+    info "Horizon login: http://$(sshable_ip)"
+    info "user:     admin"
+    info "password: Seguridad101"
   fi
 }
 

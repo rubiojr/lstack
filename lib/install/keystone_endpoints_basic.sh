@@ -107,7 +107,8 @@ keystone service-create --name cinder --type volume --description 'OpenStack Vol
 keystone service-create --name glance --type image --description 'OpenStack Image Service'
 keystone service-create --name keystone --type identity --description 'OpenStack Identity'
 keystone service-create --name ec2 --type ec2 --description 'OpenStack EC2 service'
-keystone service-create --name neutron --type network --description 'OpenStack Networking service'
+# FIXME: Disable neutron for now
+# keystone service-create --name neutron --type network --description 'OpenStack Networking service'
 keystone service-create --name swift --type object-store --description 'OpenStack Object Storage service'
 
 create_endpoint () {

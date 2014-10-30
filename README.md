@@ -2,10 +2,7 @@
 
 Create OpenStack LXC containers.
 
-```bash
-$ git clone https://github.com/rubiojr/lstack
-$ lstack bootstrap
-```
+See the [GETTING STARTED](/docs/getting-started.md) guide.
 
 ## Description
 

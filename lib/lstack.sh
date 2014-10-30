@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 green()  { color "32" "$1"; }
 yellow() { color "33" "$1"; }
@@ -248,15 +249,17 @@ glance_import() {
   local image_name=$2
   local image_id=""
 
-  ln -f "$image_file" "$LSTACK_ROOTFS/tmp/$image_name"
+  local target_file=$(mktemp -u)
+  ln -f "$image_file" "$LSTACK_ROOTFS$target_file"
   source $LSTACK_ROOTFS/root/creds.sh
   image_id=$(glance_command "image-create --name $image_name \
                                           --is-public true \
                                           --container-format bare \
                                           --disk-format qcow2 \
-                                          --file /tmp/$image_name" | \
+                                          --file $target_file" | \
                                           grep '\sid\s' | awk '{print $4}')
 
+  rm -f "$LSTACK_ROOTFS$target_file"
   echo $image_id
 }
 

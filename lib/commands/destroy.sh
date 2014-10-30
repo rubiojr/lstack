@@ -34,8 +34,8 @@ else
   warn "OpenStack credentials not found. Won't destroy the instances (if any)"
 fi
 
-for volume in $(cexe "nova volume-list"|grep -v ID|awk '{print $2}'|xargs); do
-  cexe "nova volume-delete $volume" || {
+for volume in $(cexe $LSTACK_NAME "nova volume-list"|grep -v ID|awk '{print $2}'|xargs); do
+  cexe $LSTACK_NAME "nova volume-delete $volume" || {
     error "Error deleting Cinder volume $volume"
     exit 1
   }

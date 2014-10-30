@@ -28,18 +28,25 @@ fi
 # attached. Otherwise we won't be able to remove the LVM volume group
 # and the loopback device.
 if [ -f $LSTACK_ROOTFS/root/creds.sh ]; then
+
   debug "Destroying instances"
   destroy_instances
+  for volume in $(nova_command volume-list | grep -v ID|awk '{print $2}'|xargs); do
+    nova_command "volume-delete $volume" || {
+      error "Error deleting Cinder volume $volume"
+      exit 1
+    }
+  done
+  # Wait for the volumes to be destroyed
+  for i in $(seq 1 10); do
+    [ "$(nova_command volume-list | wc -l)" = "4" ] && break
+    sleep 3
+  done
+
 else
   warn "OpenStack credentials not found. Won't destroy the instances (if any)"
 fi
 
-for volume in $(cexe $LSTACK_NAME "nova volume-list"|grep -v ID|awk '{print $2}'|xargs); do
-  cexe $LSTACK_NAME "nova volume-delete $volume" || {
-    error "Error deleting Cinder volume $volume"
-    exit 1
-  }
-done
 
 # Destroy the Volume Group used for Cinder
 debug "Destroy the volume group $VGNAME"

@@ -6,49 +6,76 @@ BASE_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" && pwd )"
 CMD_PATH="${BASH_SOURCE[0]}"
 source $BASE_PATH/lstack.sh
 source $BASE_PATH/install/creds.sh
-image=$1
 
-needs_root
+main() {
+  local image=$1
 
-if ! [ -f "$image" ]; then
-  error "Invalid image file '$image'."
-  exit 1
-fi
+  if ! [ -f "$image" ]; then
+    error "Invalid image file '$image'."
+    usage
+    exit 1
+  fi
 
-file "$image" | grep "QCOW Image" > /dev/null 2>&1 || {
-  error "Invalid image. Only QCOW images supported for now."
-  exit 1
+  file "$image" | grep "QCOW Image" > /dev/null 2>&1 || {
+    error "Invalid image. Only QCOW images supported for now."
+    usage
+    exit 1
+  }
+
+  needs_root
+
+  fifo=$(mktemp -u)
+  mkfifo $fifo
+  {
+    md5sum "$image" | awk '{print $1}' > $fifo
+  } &
+
+  # hardlink the image to the container
+  info "Importing the image into Glance..."
+  __gid=$(glance_import "$image" "$importimg_name")
+  if [ -z "$__gid " ]; then
+    error "Error importing the image"
+  fi
+
+  __gmd5=$(glance_md5 "$__gid")
+
+  while true; do
+    if read md5 < $fifo; then
+      break;
+    fi
+    sleep 1
+  done
+
+  rm -f $fifo
+  if [ "$md5" = "$__gmd5" ]; then
+    info "Image imported"
+  else
+    error "The MD5 of the imported image does not match the source MD5"
+    exit 1
+  fi
 }
 
-fifo=$(mktemp -u)
-mkfifo $fifo
-{
-  md5sum "$image" | awk '{print $1}' > $fifo
-} &
+usage() {
+  echo
+  echo "Usage: lstack importimg [options] <image-file>"
+  echo
+  echo FLAGS
+  echo
+  columnize "--name",      "Instance name   (default: lstack-%timestamp)"
+  echo
+}
 
-image_name=$(basename "$image")
+importimg_name="lstack-$(date +%s)"
+importimg_option_name()   ( importimg_name="$1"; shift; d "$@" )
+importimg_option_help()   ( usage; )
+importimg_command_help()  ( usage; )
+importimg_ () ( main )
 
-# hardlink the image to the container
-info "Importing the image into Glance..."
-__gid=$(glance_import "$image" "$image_name")
-if [ -z "$__gid " ]; then
-  error "Error importing the image"
-  rm -f "/var/lib/lxc/$LSTACK_NAME/rootfs/tmp/$image_name"
-fi
-
-__gmd5=$(glance_md5 "$__gid")
-
-while true; do
-  if read md5 < $fifo; then
-    break;
+d() {
+  # Assume there are no flags if there's only one argument
+  if [ $# = 1 ]; then
+    main $@
+  else
+    dispatch importimg "$@"
   fi
-  sleep 1
-done
-
-rm -f $fifo
-if [ "$md5" = "$__gmd5" ]; then
-  info "Image imported"
-else
-  error "The MD5 of the imported image does not match the source MD5"
-  exit 1
-fi
+}

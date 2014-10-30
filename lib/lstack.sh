@@ -319,3 +319,7 @@ destroy_instances() {
     sleep 5
   done
 }
+
+columnize() {
+  echo $@ | awk -F, '{ printf "%-20s %-40s\n", $1, $2}'
+}

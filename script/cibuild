@@ -76,7 +76,7 @@ if ! [[ "$ssh_ok" =~ OpenSSH ]]; then
 fi
 
 echo "** Test volume creation"
-lstack nova volume-create 10
+lstack nova volume-create 10 > /dev/null
 
 echo "** Testing destroy..."
 lstack destroy

@@ -43,7 +43,7 @@ else
 
   debug "Using Ubuntu mirror: $UBUNTU_MIRROR"
 
-  info "Loading required kernel modules"
+  debug "Loading required kernel modules"
   modprobe nbd
   modprobe scsi_transport_iscsi
   modprobe ebtables
@@ -80,7 +80,7 @@ else
 
   lxc-start -n $LSTACK_NAME -d
 
-  info "Waiting for the container to get an IP..."
+  debug "Waiting for the container to get an IP..."
   wait_for_container_ip $LSTACK_NAME
 
   mkdir $LSTACK_ROOTFS/$LSTACK_NAME

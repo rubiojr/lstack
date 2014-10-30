@@ -50,7 +50,12 @@ else
   modprobe iscsi_trgt
 
   info "Creating the LXC container"
-  quiet "lxc-create -n $LSTACK_NAME -t ubuntu -- -r precise --mirror http://$UBUNTU_MIRROR/ubuntu"
+  lxc-create -n $LSTACK_NAME -t ubuntu -- \
+             -r precise \
+             --mirror http://$UBUNTU_MIRROR/ubuntu >/dev/null 2>&1 || {
+    error "Failed to create the container"
+    exit 1
+  }
 
   # Enable KVM support
   if check_kvm_reqs; then

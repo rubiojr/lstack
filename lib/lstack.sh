@@ -24,10 +24,6 @@ error() {
   red "ERROR: $1"
 }
 
-quiet() {
-  $1 > /dev/null
-}
-
 debug() {
   if [ -n "$LSTACK_DEBUG" ]; then
     >&2 echo -e "\e[34m** \e[0mDEBUG: $1"

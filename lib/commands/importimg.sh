@@ -79,3 +79,5 @@ d() {
     dispatch importimg "$@"
   fi
 }
+
+dispatch importimg "$@"

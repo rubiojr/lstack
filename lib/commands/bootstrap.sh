@@ -92,7 +92,7 @@ else
 
   info "Run 'tail -f $LSTACK_LOGFILE' to follow progress"
   info "Error messages go to $LSTACK_LOGFILE.errors"
-  info "Proceeding with the install (will take some time)..."
+  info "Proceeding with the install (takes from 3 to 10 min)..."
 
   # Redirect stdout to log file
   mkdir -p $LSTACK_ROOTFS/var/lib/lstack/

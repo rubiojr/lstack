@@ -249,7 +249,7 @@ glance_import() {
   local image_id=""
 
   local target_file=$(mktemp -u)
-  ln -f "$image_file" "$LSTACK_ROOTFS$(target_file)"
+  ln -f "$image_file" "$LSTACK_ROOTFS$target_file"
   source $LSTACK_ROOTFS/root/creds.sh
   image_id=$(glance_command "image-create --name $image_name \
                                           --is-public true \

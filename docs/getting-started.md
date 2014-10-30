@@ -76,16 +76,16 @@ That will print the volume ID among other things. You'll need it for the next st
 $ sudo lstack nova boot --block-device source=volume,id=<vol-id-here>,dest=volume,shutdown=preserve \
 			               --image trusty64 \
                            --flavor m1.tiny \
-                           my-test-server
+                           trusty
 ```
 
 6. List the server being created:
 
    ```bash
 $ sudo lstack nova list --fields name,status
-+--------------------------------------+------+--------+
-| ID                                   | Name | Status |
-+--------------------------------------+------+--------+
-| db4108d5-c33f-4298-bb1c-23099fef325b | test | ACTIVE |
-+--------------------------------------+------+--------+
++--------------------------------------+--------+--------+
+| ID                                   | Name   | Status |
++--------------------------------------+--------+--------+
+| db4108d5-c33f-4298-bb1c-23099fef325b | trusty | ACTIVE |
++--------------------------------------+--------+--------+
 ```

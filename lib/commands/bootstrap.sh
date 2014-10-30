@@ -22,7 +22,7 @@ install() {
     exit 1
   else
     info "Done!"
-    info "Horizon login: http://$(sshable_ip)"
+    info "Horizon login: http://$(sshable_ip $LSTACK_NAME)"
     info "user:     admin"
     info "password: Seguridad101"
   fi

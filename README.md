@@ -1,4 +1,4 @@
-![](/images/icehouse-lxc.png)
+![](/docs/images/icehouse-lxc.png)
 
 Create OpenStack LXC containers.
 

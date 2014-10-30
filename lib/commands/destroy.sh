@@ -34,6 +34,13 @@ else
   warn "OpenStack credentials not found. Won't destroy the instances (if any)"
 fi
 
+for volume in $(cexe "nova volume-list"|grep -v ID|awk '{print $2}'|xargs); do
+  cexe "nova volume-delete $volume" || {
+    error "Error deleting Cinder volume $volume"
+    exit 1
+  }
+done
+
 # Destroy the Volume Group used for Cinder
 debug "Destroy the volume group $VGNAME"
 # If the container was not fully provisioned vgremove may not be there

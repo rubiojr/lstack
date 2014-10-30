@@ -49,14 +49,9 @@ fi
 
 
 # Destroy the Volume Group used for Cinder
-debug "Destroy the volume group $VGNAME"
-# If the container was not fully provisioned vgremove may not be there
-if cexe "$LSTACK_NAME" "which vgremove" > /dev/null; then
-  debug "Removing the LVM volume group"
-  # Remove the volume group only if it's there
-  if cexe "$LSTACK_NAME" "vgdisplay $LSTACK_NAME-vg" > /dev/null 2>&1; then
-    cexe "$LSTACK_NAME" "vgremove -f $LSTACK_NAME-vg" > /dev/null 2>&1
-  fi
+debug "Destroy the volume group $LSTACK_NAME-vg"
+if [ -d "$LSTACK_ROOTFS/dev/$LSTACK_NAME-vg" ]; then
+  cexe "$LSTACK_NAME" "vgremove -f $LSTACK_NAME-vg" > /dev/null 2>&1
 fi
 
 debug "Cleanup the loop device"

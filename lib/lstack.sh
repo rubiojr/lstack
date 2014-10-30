@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 green()  { color "32" "$1"; }
 yellow() { color "33" "$1"; }

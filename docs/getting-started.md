@@ -12,6 +12,10 @@ $ sudo apt-get update
 $ sudo apt-get install lstack
 ```
 
+**NOTE**
+
+If you're installing lstack on Ubuntu Precise, make sure you have LXC version 1.0.1 or greater installed in your system. See [LXC on Precise](docs/lxc-precise.md).
+
 ## Install it cloning the git repository
 
 Install the dependencies first:
@@ -27,6 +31,10 @@ You can now clone the lstack repository and run it from there:
 $ git clone https://github.com/rubiojr/lstack
 $ cd lstack && ./lstack
 ```
+
+**NOTE**
+
+If you're installing lstack on Ubuntu Precise, make sure you have LXC version 1.0.1 or greater installed in your system. See [LXC on Precise](docs/lxc-precise.md).
 
 ## Use it
 

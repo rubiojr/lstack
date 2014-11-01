@@ -52,10 +52,18 @@ else
   modprobe ebtables
   modprobe iscsi_trgt
 
+  __extra_args=""
+  # Old version of LXC 0.7 installed, doesn't support --mirror
+  if [ -f /usr/bin/lxc-version ]; then
+    warn "Old lxc version $(/usr/bin/lxc-version) installed, --mirror disabled."
+  else
+    __extra_args="--mirror http://$UBUNTU_MIRROR/ubuntu"
+  fi
+
   info "Creating the LXC container"
   lxc-create -n $LSTACK_NAME -t ubuntu -- \
              -r precise \
-             --mirror http://$UBUNTU_MIRROR/ubuntu >/dev/null 2>&1 || {
+             $__extra_args >/dev/null 2>&1 || {
     error "Failed to create the container"
     exit 1
   }

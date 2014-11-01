@@ -41,6 +41,13 @@ kvm_ok?() {
   [ -e /dev/kvm ] || return 1
 }
 
+running?(){
+  lxc-ls --running -1 | grep "$LSTACK_NAME" > /dev/null || {
+    error "Container '$LSTACK_NAME' not running"
+    return 1
+  }
+}
+
 check_kvm_reqs() {
   kvm_ok? || {
     pkg_installed? "qemu-kvm" || warn "Missing the qemu-kvm package."
@@ -103,10 +110,7 @@ cexe() {
   cname=$1
   shift
 
-  lxc-ls --running -1 | grep "$cname" > /dev/null || {
-    error "Container '$cname' not running"
-    exit 1
-  }
+  running?
 
   # lxc-attach doesn't work in precise by default
   if lxc-attach -n "$cname" /bin/true 2>/dev/null; then

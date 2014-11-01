@@ -7,10 +7,7 @@ source $BASE_PATH/lstack.sh
 
 needs_root
 
-lxc-ls --running -1 | grep $LSTACK_NAME > /dev/null || {
-  error "Container '$LSTACK_NAME' not running"
-  exit 1
-}
+running? || exit $?
 
 ssh_port=$(config_get "lstack.ssh_port" "22")
 ssh -q -o StrictHostKeyChecking=no \

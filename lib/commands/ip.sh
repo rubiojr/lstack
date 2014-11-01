@@ -6,5 +6,6 @@ CMD_PATH="${BASH_SOURCE[0]}"
 source $BASE_PATH/lstack.sh
 
 needs_root
+running? || exit $?
 
 echo $(sshable_ip $LSTACK_NAME)

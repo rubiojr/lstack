@@ -2,7 +2,7 @@
 set -e
 [ -n "$DEBUG" ] && set -x
 
-LSTACK_VERSION=0.91
+LSTACK_VERSION=0.92
 INSTALL_DIR=/usr/share/lstack
 BASE_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 if ! [ -f "$BASE_PATH/lib/lstack.sh" ]; then

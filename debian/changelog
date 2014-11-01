@@ -1,3 +1,9 @@
+lstack (0.91-1ubuntu2) trusty; urgency=medium
+
+  * Fix depends
+
+ -- Sergio <rubiojr@frameos.org>  Sat, 01 Nov 2014 23:18:16 +0100
+
 lstack (0.91-1ubuntu1) trusty; urgency=medium
 
   * New version

@@ -7,10 +7,9 @@ Standards-Version: 3.9.5
 Homepage: https://github.com/rubiojr/lstack
 Vcs-Git: git://github.com/rubiojr/lstack.git
 Vcs-Browser: https://github.com/rubiojr/lstack
-Depends: qemu-kvm, lxc (>= 1.0.1), ${misc:Depends}
 
 Package: lstack
 Architecture: all
-Depends: ${misc:Depends}
+Depends: qemu-kvm, lxc (>= 1.0.1), ${misc:Depends}
 Description: Provision OpenStack LXC containers
  lstack creates OpenStack LXC containers from the Ubuntu Cloud Archive.

@@ -30,7 +30,7 @@ install() {
 
 mkdir -p $LSTACK_CONF_DIR
 [ -f $LSTACK_CONF_DIR/sshkey ] || {
-  info "Creating container SSH keypair"
+  debug "Creating container SSH keypair"
   echo y | ssh-keygen -f $LSTACK_CONF_DIR/sshkey -N "" -C lstack-key -q
 }
 

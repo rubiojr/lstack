@@ -324,9 +324,14 @@ EOF
 ostack_command() {
   local oscmd=$1
 
+  if ! [[ "$oscmd" =~ cinder|nova|glance|keystone ]]; then
+    error "OpenStack command $oscmd not supported"
+    return 1
+  fi
+
   if [ -z "$oscmd" ]; then
     error "${oscmd}_command: no command specified"
-    exit 1
+    return 1
   fi
 
   shift

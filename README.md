@@ -2,6 +2,8 @@
 
 Create OpenStack LXC containers.
 
+**lstack is currently in beta**
+
 See the [GETTING STARTED](/docs/getting-started.md) guide.
 
 ## Description
@@ -16,11 +18,9 @@ Creates an LXC container and installs OpenStack Icehouse from the Ubuntu Cloud A
 
 ## Usage
 
-
 lstack has a built-in help:
 
 ```bash
-$ lstack --help
 Usage: lstack [options] [command]
 
 OPTIONS
@@ -29,6 +29,7 @@ OPTIONS
 --version             Print version
 --nocolor             No colors for the output
 --quiet               Do not print info and warning messages
+--nonyancat           Nooooooo!
 
 COMMANDS
 
@@ -41,7 +42,9 @@ ip                    Print the IP of the container
 importimg             Import a QCOW2 image to Glance
 deploy                Create an instance from a QCOW2 image
 forward               Forward ports to a running intsance
-
+glance                Run the glance command inside the container
+keystone              Run the keystone command inside the container
+cinder                Run the cinder command inside the container
 ```
 
 To destroy the container:
@@ -82,6 +85,13 @@ TCP connections to the ports 22 and 443 of container will be forwarded to the 't
 * Neutron is not supported right now. I'm using a flat network with nova-network.
 * Provisioning time usually takes between 3 and 10 minutes. A fast download pipe (or an APT cache) and a speedy SSD should do it in ~3 minutes.
 * Cinder is configured to use BlockDeviceDriver. More on this later.
+
+## Future plans
+
+* OpenStack Juno support using Ubuntu Trusty containers.
+* Adding OpenStack Swift.
+* Better block device support for Cinder, currently limited to 5 volumes.
+* Maybe Neutron replacing legacy Nova network if that's possible at all.
 
 ## Credits
 

@@ -28,4 +28,5 @@ columnize "deploy",         "Create an instance from a QCOW2 image"
 columnize "forward",        "Forward ports to a running intsance"
 columnize "glance",         "Run the glance command inside the container"
 columnize "keystone",       "Run the keystone command inside the container"
+columnize "cinder",         "Run the cinder command inside the container"
 echo

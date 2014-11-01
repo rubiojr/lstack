@@ -41,7 +41,7 @@ If you're installing lstack on Ubuntu Precise, make sure you have LXC version 1.
 You can now ssh into the container and use the OpenStack install there:
 
 ```bash
-$ sudo ./lstack ssh
+$ sudo lstack ssh
 Welcome to Ubuntu 12.04.5 LTS (GNU/Linux 3.16.0-23-generic x86_64)
 
  * Documentation:  https://help.ubuntu.com/

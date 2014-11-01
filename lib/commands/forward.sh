@@ -15,7 +15,8 @@ instance_running? "$instance" || {
 
 shift
 
-if [ -z "$(instance_ip $instance)" ]; then
+__instance_ip=$(instance_ip $instance)
+if [ -z "$__instance_ip" ]; then
   error "Could not find instance $instance private IP"
   exit 1
 fi
@@ -34,9 +35,8 @@ for port in $@; do
     config_set "lstack.ssh_port" "2200"
   fi
 
-  if ! forward_port $port $port; then
+  if ! forward_port $port $__instance_ip $port; then
     warn "Error forwarding port $port, ignoring"
     continue
   fi
-
 done

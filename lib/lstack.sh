@@ -325,12 +325,18 @@ columnize() {
 
 forward_port() {
   src_port=$1
-  dst_port=$2
+  dst_ip=$2
+  dst_port=$3
 
   ! [[ "$src_port" =~ \d+ ]] || {
     error "Invalid source port $src_port"
     return 1
   }
+
+  if ! [[ $dst_ip =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
+    error "Invalid destination ip $dst_ip"
+    return 1
+  fi
 
   ! [[ "$dst_port" =~ \d+ ]] || {
     error "Invalid destination port $dst_port"
@@ -346,7 +352,7 @@ service $src_port
   wait = no
   user = root
   port = $src_port
-  redirect = 127.0.0.1 $dst_port
+  redirect = $dst_ip $dst_port
 }
 EOF
 

@@ -21,7 +21,7 @@ If you're installing lstack on Ubuntu Precise, make sure you have LXC version 1.
 Install the dependencies first:
 
 ```bash
-$ sudo apt-get install qemu-kvm lxc
+$ sudo apt-get install qemu-kvm lxc git
 
 ```
 

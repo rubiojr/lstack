@@ -48,9 +48,7 @@ else
 
   debug "Loading required kernel modules"
   modprobe nbd
-  modprobe scsi_transport_iscsi
   modprobe ebtables
-  modprobe iscsi_trgt
 
   __extra_args=""
   # Old version of LXC 0.7 installed, doesn't support --mirror

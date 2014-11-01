@@ -1,11 +1,4 @@
 #!/bin/bash
-#
-# This is mostly based on https://github.com/fornyx/OpenStack-Havana-Install-Guide/blob/master/OpenStack-Havana-Install-Guide.rst
-#
-# Tweaked a bit to work inside LXC.
-#
-# Needs module scsi_transport_iscsi and nbd loaded in the host
-#
 set -e
 [ -n "$DEBUG" ] && set -x
 
@@ -33,7 +26,6 @@ main() {
   need_pkg "sudo"
   # 1.0.6 or greater required
   need_pkg "lxc" "1.0.1"
-  need_pkg "iscsitarget-dkms"
   need_pkg "qemu-kvm"
 
   dispatch lstack "$@"

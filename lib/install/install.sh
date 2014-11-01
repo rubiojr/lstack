@@ -16,6 +16,17 @@ add-apt-repository -y cloud-archive:icehouse
 apt-get update
 apt-get dist-upgrade -y
 
+# FIXME
+# open-iscsi service fails to start if iscsi_trgt kernel module isn't
+# loaded in the host. We don't need the iSCSI functionality but we have
+# to workaround it because it's a dependency of the OpenStack packages.
+debug "Workaround open-iscsi modprobe issue"
+apt-get install -y open-iscsi || {
+  # this will prevent the service from being started
+  chmod -x /etc/init.d/open-iscsi
+  apt-get install -y open-iscsi
+}
+
 info "Installing OpenStack Icehouse"
 # nova-compute upstart config tries to modprobe nbd and that doesn't
 # work inside LXC: http://askubuntu.com/a/402433

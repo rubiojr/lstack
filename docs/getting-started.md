@@ -1,5 +1,10 @@
 # Getting started with lstack
 
+- [Install it (Ubuntu PPA)](#install-it-ubuntu-ppa)
+- [Install it cloning the git repository](#install-it-cloning-the-git-repository)
+- [Use it](#use-it)
+
+
 Currently Ubuntu (Precise, Trusty, Utopic) is the only Linux distribution supported.
 
 ## Install it (Ubuntu PPA)

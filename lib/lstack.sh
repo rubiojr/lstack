@@ -222,7 +222,6 @@ glance_import() {
 
   local target_file=$(mktemp -u)
   ln -f "$image_file" "$LSTACK_ROOTFS$target_file"
-  source $LSTACK_ROOTFS/root/creds.sh
   image_id=$(glance_command "image-create --name $image_name \
                                           --is-public true \
                                           --container-format bare \
@@ -242,29 +241,17 @@ glance_md5() {
     return 1
   fi
 
-  source $LSTACK_ROOTFS/root/creds.sh
   glance_command "image-show $image_id" | grep 'checksum' | awk '{print $4}'
 }
 
 cinder_command() {
-
-  if [ -z "$1" ]; then
-    error "cinder_command: no command specified"
-    exit 1
-  fi
-
-  cexe "$LSTACK_NAME" "cinder --os-username=$OS_USERNAME \
-                              --os-password=$OS_PASSWORD \
-                              --os-tenant-name $OS_TENANT_NAME \
-                              --os-auth-url $OS_AUTH_URL \
-                              $@"
+  ostack_command cinder $@
 }
 
 cinder_create() {
   local size=$1
   local vol_id=""
 
-  source $LSTACK_ROOTFS/root/creds.sh
   vol_id=$(cinder_command "create $size" | grep '\sid\s' | awk '{print $4}')
 
   echo $vol_id
@@ -349,6 +336,7 @@ ostack_command() {
     return 1
   fi
 
+  source $LSTACK_ROOTFS/root/creds.sh
   cexe "$LSTACK_NAME" "$oscmd --os-username=$OS_USERNAME \
                               --os-password=$OS_PASSWORD \
                               --os-tenant-name $OS_TENANT_NAME \

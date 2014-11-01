@@ -33,7 +33,7 @@ main() {
   need_pkg "sudo"
   need_pkg "lxc"
   need_pkg "iscsitarget-dkms"
-
+  need_pkg "qemu-kvm"
 
   dispatch lstack "$@"
 }

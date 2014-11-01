@@ -93,6 +93,8 @@ TCP connections to the ports 22 and 443 of container will be forwarded to the 't
 * Better block device support for Cinder, currently limited to 5 volumes.
 * Maybe Neutron replacing legacy Nova network if that's possible at all.
 
+See the [TODO](TODO.md) list.
+
 ## Credits
 
 * https://github.com/fornyx/OpenStack-Havana-Install-Guide for such an excelent guide that helped me to tame the Icehouse beast.

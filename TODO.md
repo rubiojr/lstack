@@ -1,24 +1,21 @@
 # TODO
 
-## Add general documentation
+## 1.0
 
-* Why the BlockDeviceDriver: https://bugs.launchpad.net/ubuntu/+source/lxc/+bug/1226855
-* How do we manage LVM volume: http://askubuntu.com/questions/376345/allow-loop-mounting-files-inside-lxc-containers
-* Architecture
-* More comprehensive usage and tips
+* Bug fixing.
+* Doc updates (Vagrant, usage tips).
+* Tests.
+* Add option to force bootstrap destroying the previous container.
 
-## Swift support
+## Future
 
-## Neutron support
+* Add general documentation
+  * Why the BlockDeviceDriver: https://bugs.launchpad.net/ubuntu/+source/lxc/+bug/1226855
+  * How do we manage LVM volume: http://askubuntu.com/questions/376345/allow-loop-mounting-files-inside-lxc-containers
+  * Architecture
 
-## General improvements
-
-* Better loop device management (hardcoded to loop6 currently)
-* Unprivileged containers?
-* Custom name for the container (hardcoded to lstack now)
-* Forward command to forward container ports to the instances
-* Add option to force bootstrap destroying the previous container
-
-## Tests
-
-* Find a good test framework and hook up tests to the repo
+* Swift support.
+* Neutron support?.
+* Unprivileged containers?.
+* Custom name for the container (hardcoded to lstack-username now).
+* Find a good test framework and hook up tests to the repo.

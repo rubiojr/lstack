@@ -75,7 +75,7 @@ need_pkg() {
   [ -n "$min" ] && return 0
 
   local iver=$(dpkg-query -W --showformat='${Version}\n' $1)
-  if dpkg --compare-version $iver lt $min; then
+  if dpkg --compare-versions $iver lt $min; then
     error "Package $1 version needs to be greater than $min"
     return 1
   fi

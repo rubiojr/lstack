@@ -63,11 +63,22 @@ lxc_config_set() {
 }
 
 need_pkg() {
+  local min=$2
+
   pkg_installed? $1 || {
     error "Package $1 doesn't seem to be installed."
     error "Run 'sudo apt-get install $1' first."
     exit 1
   }
+
+  # no minimum version specified, return
+  [ -n "$min" ] && return 0
+
+  local iver=$(dpkg-query -W --showformat='${Version}\n' $1)
+  if dpkg --compare-version $iver lt $min; then
+    error "Package $1 version needs to be greater than $min"
+    return 1
+  fi
 }
 
 wait_for_container_ip() {

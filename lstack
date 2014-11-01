@@ -31,7 +31,8 @@ main() {
 
   source $BASE_PATH/lib/lstack.sh
   need_pkg "sudo"
-  need_pkg "lxc"
+  # 1.0.6 or greater required
+  need_pkg "lxc", "1.0.1"
   need_pkg "iscsitarget-dkms"
   need_pkg "qemu-kvm"
 

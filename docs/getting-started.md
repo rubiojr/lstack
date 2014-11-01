@@ -56,7 +56,7 @@ root@lstack-rubiojr:~#
 Or use the proxy commands (nova, glance, keystone, etc):
 
 ```bash
-$ sudo ./lstack nova list --fields name,status,power_state
+$ sudo lstack nova list --fields name,status,power_state
 +--------------------------------------+------+--------+-------------+
 | ID                                   | Name | Status | Power State |
 +--------------------------------------+------+--------+-------------+

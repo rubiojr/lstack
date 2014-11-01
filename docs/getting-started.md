@@ -61,4 +61,4 @@ $ sudo ./lstack nova list --fields name,status,power_state
 
 Run `lstack --help` to list the commands available.
 
-Next: [how to boot a server from a QCOW2 image](/docs/deploying-ubuntu.md)
+**Next:** [how to boot a server from a QCOW2 image](/docs/deploying-ubuntu.md)

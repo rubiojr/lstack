@@ -9,7 +9,7 @@ source $BASE_PATH/lstack.sh
 check_distro
 needs_root
 
-if ! lxc-info -n "$LSTACK_NAME" >/dev/null 2>&1; then
+if ! lxc-ls -1 |grep ^$LSTACK_NAME >/dev/null 2>&1; then
   error "$LSTACK_NAME container not available"
   exit 1
 fi

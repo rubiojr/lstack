@@ -160,22 +160,7 @@ instance_running?() {
 }
 
 nova_command() {
-
-  if [ -z "$1" ]; then
-    error "nova_command: no command specified"
-    exit 1
-  fi
-
-  if ! [ -f $LSTACK_ROOTFS/root/creds.sh ]; then
-    error "nova_command: OpenStack credentials not found!"
-    return 1
-  fi
-
-  source $LSTACK_ROOTFS/root/creds.sh
-  cexe "$LSTACK_NAME" "nova --os-username $OS_USERNAME \
-                      --os-password=$OS_PASSWORD \
-                      --os-tenant-name $OS_TENANT_NAME \
-                      --os-auth-url $OS_AUTH_URL $@"
+  ostack_command nova $@
 }
 
 instance_ip() {
@@ -227,17 +212,7 @@ config_get() {
 }
 
 glance_command() {
-
-  if [ -z "$1" ]; then
-    error "glance_command: no command specified"
-    exit 1
-  fi
-
-  cexe "$LSTACK_NAME" "glance --os-username=$OS_USERNAME \
-                              --os-password=$OS_PASSWORD \
-                              --os-tenant-name $OS_TENANT_NAME \
-                              --os-auth-url $OS_AUTH_URL \
-                              $@"
+  ostack_command glance $@
 }
 
 glance_import() {
@@ -357,4 +332,26 @@ service $src_port
 EOF
 
   cexe "$LSTACK_NAME" "service xinetd restart" > /dev/null
+}
+
+ostack_command() {
+  local oscmd=$1
+
+  if [ -z "$oscmd" ]; then
+    error "${oscmd}_command: no command specified"
+    exit 1
+  fi
+
+  shift
+
+  if ! [ -f $LSTACK_ROOTFS/root/creds.sh ]; then
+    error "${oscmd}_command: OpenStack credentials not found!"
+    return 1
+  fi
+
+  cexe "$LSTACK_NAME" "$oscmd --os-username=$OS_USERNAME \
+                              --os-password=$OS_PASSWORD \
+                              --os-tenant-name $OS_TENANT_NAME \
+                              --os-auth-url $OS_AUTH_URL \
+                              $@"
 }

@@ -72,7 +72,7 @@ need_pkg() {
   }
 
   # no minimum version specified, return
-  [ -n "$min" ] && return 0
+  [ -z "$min" ] && return 0
 
   local iver=$(dpkg-query -W --showformat='${Version}\n' $1)
   if dpkg --compare-versions $iver lt $min; then

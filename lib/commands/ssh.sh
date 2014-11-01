@@ -12,6 +12,7 @@ lxc-ls --running -1 | grep $LSTACK_NAME > /dev/null || {
   exit 1
 }
 
+ssh_port=$(config_get "lstack.ssh_port" "22")
 ssh -q -o StrictHostKeyChecking=no \
     -p "$ssh_port" \
     -o ConnectTimeout=2 \

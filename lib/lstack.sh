@@ -84,13 +84,19 @@ need_pkg() {
 wait_for_container_ip() {
   local cname=$1
 
-  n=0
+  local ip=""
+  local n=0
   until [ $n -ge 5 ]; do
     sleep 5
-    IP=$(lxc-ls --fancy $cname | tail -n1 | awk '{print $3}') || true
-    [ -n "$IP" ] && break  # substitute your command here
+    ip=$(lxc-ls --fancy $cname | tail -n1 | awk '{print $3}') || true
+    [ -n "$ip" ] && break  # substitute your command here
     n=$[$n+1]
   done
+
+  if [ -z "$ip" ]; then
+    error "Error while waiting for the container to get an IP"
+    return 1
+  fi
 }
 
 cexe() {

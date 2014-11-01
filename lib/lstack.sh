@@ -322,3 +322,33 @@ destroy_instances() {
 columnize() {
   echo $@ | awk -F, '{ printf "%-20s %-40s\n", $1, $2}'
 }
+
+forward_port() {
+  src_port=$1
+  dst_port=$2
+
+  ! [[ "$src_port" =~ \d+ ]] || {
+    error "Invalid source port $src_port"
+    return 1
+  }
+
+  ! [[ "$dst_port" =~ \d+ ]] || {
+    error "Invalid destination port $dst_port"
+    return 1
+  }
+
+  cat > $LSTACK_ROOTFS/etc/xinetd.d/lstack$src_port << EOF
+service $src_port
+{
+  flags = IPv4
+  type = UNLISTED
+  socket_type = stream
+  wait = no
+  user = root
+  port = $src_port
+  redirect = 127.0.0.1 $dst_port
+}
+EOF
+
+  cexe "$LSTACK_NAME" "service xinetd restart" > /dev/null
+}

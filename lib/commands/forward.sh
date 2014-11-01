@@ -34,24 +34,9 @@ for port in $@; do
     config_set "lstack.ssh_port" "2200"
   fi
 
-  ! [[ "$port" =~ \d+ ]] || {
-    warn "Invalid port $port, ignoring"
+  if ! forward_port $port $port; then
+    warn "Error forwarding port $port, ignoring"
     continue
-  }
-
-  cat > $LSTACK_ROOTFS/etc/xinetd.d/lstack$port << EOF
-service $port
-{
-  flags = IPv4
-  type = UNLISTED
-  socket_type = stream
-  wait = no
-  user = root
-  port = $port
-  redirect = $(instance_ip $instance) $port
-}
-EOF
+  fi
 
 done
-
-cexe "$LSTACK_NAME" "service xinetd restart" > /dev/null

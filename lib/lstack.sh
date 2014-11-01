@@ -68,7 +68,7 @@ need_pkg() {
   pkg_installed? $1 || {
     error "Package $1 doesn't seem to be installed."
     error "Run 'sudo apt-get install $1' first."
-    exit 1
+    return 1
   }
 
   # no minimum version specified, return

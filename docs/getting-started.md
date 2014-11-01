@@ -1,5 +1,7 @@
 # Getting started with lstack
 
+Currently Ubuntu (Precise, Trusty, Utopic) is the only Linux distribution supported.
+
 ## Install it (Ubuntu PPA)
 
 The recommended way is to install it from the PPA:
@@ -12,7 +14,14 @@ $ sudo apt-get install lstack
 
 ## Install it cloning the git repository
 
-You can also clone the lstack repository and run it from there:
+Install the dependencies first:
+
+```bash
+$ sudo apt-get install qemu-kvm lxc iscsitarget-dkms git linux-headers-`uname -r`
+
+```
+
+You can now clone the lstack repository and run it from there:
 
 ```
 $ git clone https://github.com/rubiojr/lstack

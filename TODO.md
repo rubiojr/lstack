@@ -5,7 +5,6 @@
 * Bug fixing.
 * Doc updates (Vagrant, usage tips).
 * Tests.
-* Add option to force bootstrap destroying the previous container.
 
 ## Future
 

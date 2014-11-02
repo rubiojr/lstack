@@ -14,6 +14,8 @@ columnize "--version",      "Print version"
 columnize "--nocolor",      "No colors for the output"
 columnize "--quiet",        "Do not print info and warning messages"
 columnize "--nonyancat",    "Nooooooo!"
+columnize "--debug",        "Enable debugging"
+columnize "--trace",        "Trace the execution of the script"
 echo
 echo "COMMANDS"
 echo

@@ -17,7 +17,7 @@ info() {
 }
 
 warn() {
-  [ -n "$LSTACK_QUIET" ] || yellow "WARN: $1"
+  [ -n "$LSTACK_NOWARN" ] || yellow "WARN: $1"
 }
 
 error() {

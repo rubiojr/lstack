@@ -12,10 +12,11 @@ echo
 columnize "--help",         "Print help"
 columnize "--version",      "Print version"
 columnize "--nocolor",      "No colors for the output"
-columnize "--quiet",        "Do not print info and warning messages"
+columnize "--quiet",        "Do not print info messages"
 columnize "--nonyancat",    "Nooooooo!"
 columnize "--debug",        "Enable debugging"
 columnize "--trace",        "Trace the execution of the script"
+columnize "--nowarn",       "Do not print warning messages"
 echo
 echo "COMMANDS"
 echo

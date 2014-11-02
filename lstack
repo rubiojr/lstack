@@ -50,6 +50,7 @@ lstack_option_nocolor()      ( export LSTACK_NOCOLOR=1; dispatch lstack "$@" )
 lstack_option_quiet()        ( export LSTACK_QUIET=1; dispatch lstack "$@" )
 lstack_option_nonyancat()    ( export LSTACK_NONYANCAT=1; dispatch lstack "$@" )
 lstack_option_debug()        ( export LSTACK_DEBUG=1; dispatch lstack "$@" )
+lstack_option_nowarn()       ( export LSTACK_NOWARN=1; dispatch lstack "$@" )
 lstack_option_trace()        (
   set -x
   export PS4='+(${BASH_SOURCE}:${LINENO}): ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'

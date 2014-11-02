@@ -1,3 +1,9 @@
+lstack (0.94-0rubiojr1) trusty; urgency=medium
+
+  * New version
+
+ -- Sergio <rubiojr@frameos.org>  Sun, 02 Nov 2014 22:52:18 +0100
+
 lstack (0.93-0rubiojr1) trusty; urgency=medium
 
   * New version

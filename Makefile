@@ -34,10 +34,10 @@ debpkg: deborig
 	debuild -S && mv ../$(NAME)_* $(DEB_TARGET_DIR)
 
 test:
-	$(BATS) test/bootstrap.bat \
-		      test/ip.bat \
-					test/ssh.bat \
-	        test/ostack_commands.bat \
-					test/destroy.bat
+	@$(BATS) test/bootstrap.bat \
+		 test/ip.bat \
+		 test/ssh.bat \
+		 test/ostack_commands.bat \
+		 test/destroy.bat
 
 .PHONY: test

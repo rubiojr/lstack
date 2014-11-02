@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-LSTACK_VERSION=0.92
+LSTACK_VERSION=0.93
 INSTALL_DIR=/usr/share/lstack
 BASE_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 if ! [ -f "$BASE_PATH/lib/lstack.sh" ]; then

@@ -34,6 +34,6 @@ debpkg: deborig
 	debuild -S && mv ../$(NAME)_* $(DEB_TARGET_DIR)
 
 test:
-	$(BATS) test/bootstrap.bat
+	$(BATS) test/bootstrap.bat test/ip.bat
 
 .PHONY: test

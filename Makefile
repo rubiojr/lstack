@@ -6,6 +6,7 @@ PKG_NAME=$(NAME)-$(VERSION)
 PKG=$(PKG_DIR)/$(PKG_NAME).tar.gz
 SIG=$(PKG_DIR)/$(PKG_NAME).asc
 DEB_TARGET_DIR=$(HOME)/debian/$(NAME)
+BATS="./vendor/bats/bin/bats"
 
 PREFIX?=/usr/local
 DOC_DIR=$(PREFIX)/share/doc/$(PKG_NAME)
@@ -31,3 +32,12 @@ clean:
 debpkg: deborig
 	mkdir -p $(DEB_TARGET_DIR)
 	debuild -S && mv ../$(NAME)_* $(DEB_TARGET_DIR)
+
+test:
+	@$(BATS) test/bootstrap.bat \
+		 test/ip.bat \
+		 test/ssh.bat \
+		 test/ostack_commands.bat \
+		 test/destroy.bat
+
+.PHONY: test

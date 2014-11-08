@@ -11,7 +11,7 @@ HYPERVISOR=${HYPERVISOR:-qemu}
 
 info "Enabling icehouse cloud-archive repo"
 apt-get update
-apt-get install -y software-properties-common penssh-server curl
+apt-get install -y software-properties-common openssh-server curl
 add-apt-repository -y cloud-archive:icehouse
 apt-get update
 apt-get dist-upgrade -y

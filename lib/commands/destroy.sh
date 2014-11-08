@@ -24,6 +24,11 @@ if lxc-info -n "$LSTACK_NAME" | grep STOPPED >/dev/null; then
   wait_for_container_ip
 fi
 
+# make sure the required kernel modules are loaded
+debug "Loading required kernel modules"
+modprobe nbd
+modprobe ebtables
+
 # We need to destroy the instances in case they have Cinder volumes
 # attached. Otherwise we won't be able to remove the LVM volume group
 # and the loopback device.

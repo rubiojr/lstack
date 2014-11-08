@@ -2,10 +2,8 @@
 
 ## 1.0
 
-* Bug fixing.
-* Doc updates (Vagrant, usage tips).
-* Tests.
-* Print a clear error when container didn't get an IP (bootstrap)
+* Support both Juno and Icehouse releases
+* Add self-test and diagnostics commands
 
 ## Future
 

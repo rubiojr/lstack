@@ -145,19 +145,24 @@ usage() {
   echo
   echo FLAGS
   echo
-  columnize "--release",      "OpenStack release (default: Juno)"
-  columnize "--force",        "Destroy the container first if it already exists"
+  columnize "--release <name>", "OpenStack release (default: juno)"
+  columnize "--force",          "Destroy the container first if it already exists"
   echo
 }
 
 importimg_option_release()   (
   case $1 in
+    '')
+      error "Missing release name: juno, icehouse"
+      exit 1
+      ;;
     juno)
       ;;
     icehouse)
       ;;
     *)
-      error "OpenStack release '$1' not supported."
+      error "OpenStack release '$1' not supported"
+      error "Currently supported releases: icehouse, juno"
       exit 1
       ;;
   esac

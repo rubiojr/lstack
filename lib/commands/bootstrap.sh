@@ -19,13 +19,14 @@ install() {
     error "Tailing the last 5 lines of $LSTACK_LOGFILE.errors:\n\n"
     >&2 tail -n5 $LSTACK_LOGFILE.errors | \
       sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"
-    exit 1
+    return 1
   else
     info "Done!"
     info "Horizon login: http://$(sshable_ip $LSTACK_NAME)/horizon"
     info 'user:     admin\e[K'
     info 'password: Seguridad101\e[K'
   fi
+  return 0
 }
 
 main() {

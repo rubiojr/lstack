@@ -67,5 +67,6 @@ while [ "$(ps a | awk '{print $1}' | grep $1)" ]; do for x in "${IMGS[@]}"; do
     sleep $REFRESH
 done; done
 finish
+exit 0
 
 # will never reach here, CTRL+C is required to quit

@@ -38,6 +38,7 @@ dispatch ()
   if [ -z "$arg" ]; then
     # Call empty call placeholder
     "${namespace}_"
+    return 0
   fi
 
   shift 2 # Remove namespace and first argument from $@

@@ -10,7 +10,12 @@ source $BASE_PATH/install/creds.sh
 main() {
   local image=$1
 
-  if ! [ -f "$image" ]; then
+  running? || {
+    error "The container isn't running. Run 'lstack bootstrap' first."
+    exit 1
+  }
+
+  if [ ! -f "$image" ]; then
     error "Invalid image file '$image'."
     usage
     exit 1
@@ -21,6 +26,11 @@ main() {
     usage
     exit 1
   }
+
+  if [ ! -r "$image" ]; then
+    error "The image '$image' is not readable."
+    exit 1
+  fi
 
   needs_root
 

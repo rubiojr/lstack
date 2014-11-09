@@ -2,9 +2,8 @@
 
 ## 1.0
 
-* Bug fixing.
-* Doc updates (Vagrant, usage tips).
-* Tests.
+* Support both Juno and Icehouse releases
+* Add self-test and diagnostics commands
 
 ## Future
 

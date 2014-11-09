@@ -114,7 +114,7 @@ vgcreate $VGNAME $loopdev || {
 
 # create the dm devices, required when using a Trusty container but
 # not with Precise for some reason
-for i in 0 1 2 3 4 5 6 8 9 10; do
+for i in 0 1 2 3 4 5 6 7 8 9 10; do
   mknod /dev/dm-$i b 252 $i
 done
 chgrp disk /dev/dm-*

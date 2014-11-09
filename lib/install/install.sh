@@ -102,8 +102,16 @@ losetup $loopdev /$VGNAME || {
 # Save the loop dev for later cleanup
 echo "LOOPDEV=$loopdev" >> /var/lib/lstack/metadata
 
-pvcreate $loopdev
-vgcreate $VGNAME $loopdev
+pvcreate $loopdev || {
+  error "Could not pvcreate loop device '$loopdev'"
+  exit 1
+}
+
+vgcreate $VGNAME $loopdev || {
+  error "Could not create volume group '$VGNAME' using loop device '$loopdev'"
+  exit 1
+}
+
 lvcreate --name disk1 --size 10G $VGNAME
 lvcreate --name disk2 --size 10G $VGNAME
 lvcreate --name disk3 --size 10G $VGNAME

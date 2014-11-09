@@ -49,7 +49,6 @@ lstack_option_help()         ( source $BASE_PATH/lib/commands/help.sh )
 lstack_option_version()      ( echo lstack v$LSTACK_VERSION )
 lstack_option_nocolor()      ( export LSTACK_NOCOLOR=1; dispatch lstack "$@" )
 lstack_option_quiet()        ( export LSTACK_QUIET=1; dispatch lstack "$@" )
-lstack_option_nonyancat()    ( export LSTACK_NONYANCAT=1; dispatch lstack "$@" )
 lstack_option_debug()        ( export LSTACK_DEBUG=1; dispatch lstack "$@" )
 lstack_option_nowarn()       ( export LSTACK_NOWARN=1; dispatch lstack "$@" )
 lstack_option_trace()        (

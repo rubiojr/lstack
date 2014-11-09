@@ -7,9 +7,6 @@ CMD_PATH="${BASH_SOURCE[0]}"
 UBUNTU_MIRROR=${UBUNTU_MIRROR:-archive.ubuntu.com}
 source $BASE_PATH/lstack.sh
 
-check_distro
-needs_root
-
 install() {
   exec > "$LSTACK_LOGFILE"
   if ! cexe $LSTACK_NAME "bash /root/lstack/install/install.sh" \
@@ -31,6 +28,9 @@ install() {
 
 main() {
 
+  check_distro
+  needs_root
+
   info "Bootstrapping OpenStack release: $LSTACK_OSRELEASE"
   #
   # Create the SSH key pair that will be used by lstack to SSH to the container
@@ -51,7 +51,7 @@ main() {
 
   if [ -n "$found" ]; then
     if lxc-info -n $LSTACK_NAME | grep RUNNING >/dev/null; then
-      warn "Container already running. Use --force to destroy the current one."
+      error "Container already running. Use --force to destroy the current one."
     else
       error "Container has been created but it's currently stopped"
       error "Run 'sudo lxc-start -n $LSTACK_NAME -d' to start it first"
@@ -131,15 +131,9 @@ EOH
   chmod 0700 $LSTACK_ROOTFS/root/.ssh
   cp $LSTACK_CONF_DIR/sshkey.pub $LSTACK_ROOTFS/root/.ssh/authorized_keys
 
-  if [ -n "$LSTACK_QUIET" ] || [ -n "$LSTACK_NONYANCAT" ]; then
-    install
-  else
-    install &
-    source $BASE_PATH/nyancat.sh $!
-  fi
+  install
 
 }
-
 
 usage() {
   echo
@@ -168,21 +162,11 @@ bootstrap_option_release()   (
       exit 1
       ;;
   esac
-  export LSTACK_OSRELEASE=$1; shift; d "$@"
+  export LSTACK_OSRELEASE=$1; shift; dispatch "$@"
 )
 bootstrap_option_help()      ( usage; )
-bootstrap_force=""
 bootstrap_option_force()     ( export bootstrap_force=1; dispatch bootstrap "$@" )
 bootstrap_command_help()     ( usage; )
 bootstrap_ ()                ( main )
-
-d() {
-  # Assume there are no flags if there's only one argument
-  if [ $# = 1 ]; then
-    main $@
-  else
-    dispatch bootstrap "$@"
-  fi
-}
 
 dispatch bootstrap "$@"

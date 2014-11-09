@@ -9,11 +9,8 @@ source $BASE_PATH/../lstack.sh
 
 HYPERVISOR=${HYPERVISOR:-qemu}
 
-info "Enabling icehouse cloud-archive repo"
 apt-get update
-apt-get install -y python-software-properties openssh-server curl
-add-apt-repository -y cloud-archive:icehouse
-apt-get update
+apt-get install -y software-properties-common openssh-server curl
 apt-get dist-upgrade -y
 
 # FIXME
@@ -44,7 +41,7 @@ apt-get install -y python-mysqldb mysql-server rabbitmq-server \
                    nova-novncproxy nova-doc nova-conductor \
                    nova-compute-$HYPERVISOR \
                    openstack-dashboard memcached nova-network \
-                   cpu-checker qemu ebtables python-guestfs \
+                   cpu-checker qemu ebtables python-guestfs libguestfs-tools \
                    cinder-api cinder-scheduler cinder-volume xinetd \
                    swift
 
@@ -105,8 +102,23 @@ losetup $loopdev /$VGNAME || {
 # Save the loop dev for later cleanup
 echo "LOOPDEV=$loopdev" >> /var/lib/lstack/metadata
 
-pvcreate $loopdev
-vgcreate $VGNAME $loopdev
+pvcreate $loopdev || {
+  error "Could not pvcreate loop device '$loopdev'"
+  exit 1
+}
+
+vgcreate $VGNAME $loopdev || {
+  error "Could not create volume group '$VGNAME' using loop device '$loopdev'"
+  exit 1
+}
+
+# create the dm devices, required when using a Trusty container but
+# not with Precise for some reason
+for i in 0 1 2 3 4 5 6 7 8 9 10; do
+  mknod /dev/dm-$i b 252 $i
+done
+chgrp disk /dev/dm-*
+
 lvcreate --name disk1 --size 10G $VGNAME
 lvcreate --name disk2 --size 10G $VGNAME
 lvcreate --name disk3 --size 10G $VGNAME
@@ -117,8 +129,8 @@ cp $BASE_PATH/../configs/cinder/* /etc/cinder/
 sed -i "s/cinder-volumes/$VGNAME/g" /etc/cinder/cinder.conf
 rm /var/lib/cinder/cinder.sqlite
 cinder-manage db sync
-cd /etc/init.d/; for i in $( ls cinder-* ); do
-  service $i restart; cd /root/;
+cd /etc/init/; for i in $( ls cinder-* ); do
+  service `basename $i .conf` restart
 done
 
 #
@@ -141,10 +153,14 @@ virsh net-undefine default
 cp $BASE_PATH/../configs/default/* /etc/default/
 cp $BASE_PATH/../configs/nova/* /etc/nova/
 service dbus restart && service libvirt-bin restart
-for f in /etc/init.d/nova-*; do $f restart; done
 rm -f /var/lib/nova/nova.sqlite
+cd /etc/init/; for i in $( ls nova-* ); do
+  service `basename $i .conf` restart
+done
 nova-manage db sync
-for f in /etc/init.d/nova-*; do $f restart; done
+cd /etc/init/; for i in $( ls nova-* ); do
+  service `basename $i .conf` restart
+done
 nova-manage --config-file /etc/nova/nova.conf network create private 10.0.254.0/24 1 256
 
 info "Creating a cirros 0.3 instance. user: cirros, password: cubswin:)"

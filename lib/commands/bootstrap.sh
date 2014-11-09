@@ -67,7 +67,7 @@ fi
 
 info "Creating the LXC container"
 lxc-create -n $LSTACK_NAME -t ubuntu -- \
-           -r precise \
+           -r trusty \
            $__extra_args >/dev/null 2>&1 || {
   error "Failed to create the container"
   exit 1

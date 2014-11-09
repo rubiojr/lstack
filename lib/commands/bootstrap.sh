@@ -43,7 +43,7 @@ main() {
 
   local found=$(lxc-ls -1 | grep $LSTACK_NAME) || true
   # --force being used, destroy the existing container first
-  if [ "$1" = '--force' ] && [ -n "$found" ]; then
+  if [ -n "$bootstrap_force" ] && [ -n "$found" ]; then
     ( source $BASE_PATH/commands/destroy.sh )
     found=""
   fi
@@ -151,7 +151,7 @@ usage() {
   echo
 }
 
-importimg_option_release()   (
+bootstrap_option_release()   (
   case $1 in
     '')
       error "Missing release name: juno, icehouse"
@@ -169,17 +169,19 @@ importimg_option_release()   (
   esac
   export LSTACK_OSRELEASE=$1; shift; d "$@"
 )
-importimg_option_help()      ( usage; )
-importimg_command_help()     ( usage; )
-importimg_ () ( main )
+bootstrap_option_help()      ( usage; )
+bootstrap_force=""
+bootstrap_option_force()     ( export bootstrap_force=1; dispatch bootstrap "$@" )
+bootstrap_command_help()     ( usage; )
+bootstrap_ ()                ( main )
 
 d() {
   # Assume there are no flags if there's only one argument
   if [ $# = 1 ]; then
     main $@
   else
-    dispatch importimg "$@"
+    dispatch bootstrap "$@"
   fi
 }
 
-dispatch importimg "$@"
+dispatch bootstrap "$@"

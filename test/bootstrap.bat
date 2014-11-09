@@ -3,7 +3,7 @@
 load test_helper
 
 @test "bootstrap" {
-  lstack bootstrap
+  lstack bootstrap --release $LSTACK_OSRELEASE
 }
 
 @test "bootstrapping when already running fails" {
@@ -11,5 +11,5 @@ load test_helper
 }
 
 @test "bootstrap --force" {
-  lstack bootstrap --force
+  lstack bootstrap --release $LSTACK_OSRELEASE --force
 }

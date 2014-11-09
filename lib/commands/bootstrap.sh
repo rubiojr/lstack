@@ -28,103 +28,152 @@ install() {
   fi
 }
 
-mkdir -p $LSTACK_CONF_DIR
-[ -f $LSTACK_CONF_DIR/sshkey ] || {
-  debug "Creating container SSH keypair"
-  echo y | ssh-keygen -f $LSTACK_CONF_DIR/sshkey -N "" -C lstack-key -q
-}
+main() {
 
-found=$(lxc-ls -1 | grep $LSTACK_NAME) || true
-# --force being used, destroy the existing container first
-if [ "$1" = '--force' ] && [ -n "$found" ]; then
-  ( source $BASE_PATH/commands/destroy.sh )
-  found=""
-fi
+  info "Bootstrapping OpenStack release: $LSTACK_OSRELEASE"
+  #
+  # Create the SSH key pair that will be used by lstack to SSH to the container
+  # and to run remote commands.
+  #
+  mkdir -p $LSTACK_CONF_DIR
+  [ -f $LSTACK_CONF_DIR/sshkey ] || {
+    debug "Creating container SSH keypair"
+    echo y | ssh-keygen -f $LSTACK_CONF_DIR/sshkey -N "" -C lstack-key -q
+  }
 
-if [ -n "$found" ]; then
-  if lxc-info -n $LSTACK_NAME | grep RUNNING >/dev/null; then
-    warn "Container already running. Use --force to destroy the current one."
-  else
-    error "Container has been created but it's currently stopped"
-    error "Run 'sudo lxc-start -n $LSTACK_NAME -d' to start it first"
+  local found=$(lxc-ls -1 | grep $LSTACK_NAME) || true
+  # --force being used, destroy the existing container first
+  if [ "$1" = '--force' ] && [ -n "$found" ]; then
+    ( source $BASE_PATH/commands/destroy.sh )
+    found=""
   fi
-  exit 1
-fi
 
-debug "Using Ubuntu mirror: $UBUNTU_MIRROR"
+  if [ -n "$found" ]; then
+    if lxc-info -n $LSTACK_NAME | grep RUNNING >/dev/null; then
+      warn "Container already running. Use --force to destroy the current one."
+    else
+      error "Container has been created but it's currently stopped"
+      error "Run 'sudo lxc-start -n $LSTACK_NAME -d' to start it first"
+    fi
+    exit 1
+  fi
 
-debug "Loading required kernel modules"
-modprobe nbd
-modprobe ebtables
+  debug "Using Ubuntu mirror: $UBUNTU_MIRROR"
 
-__extra_args=""
-# Old version of LXC 0.7 installed, doesn't support --mirror
-if [ -f /usr/bin/lxc-version ]; then
-  warn "Old lxc version $(/usr/bin/lxc-version) installed, --mirror disabled."
-else
-  __extra_args="--mirror http://$UBUNTU_MIRROR/ubuntu"
-fi
+  debug "Loading required kernel modules"
+  modprobe nbd
+  modprobe ebtables
 
-info "Creating the LXC container"
-lxc-create -n $LSTACK_NAME -t ubuntu -- \
-           -r trusty \
-           $__extra_args >/dev/null 2>&1 || {
-  error "Failed to create the container"
-  exit 1
-}
+  __extra_args=""
+  # Old version of LXC 0.7 installed, doesn't support --mirror
+  if [ -f /usr/bin/lxc-version ]; then
+    warn "Old lxc version $(/usr/bin/lxc-version) installed, --mirror disabled."
+  else
+    __extra_args="--mirror http://$UBUNTU_MIRROR/ubuntu"
+  fi
 
-# Enable KVM support
-if check_kvm_reqs; then
-  # /dev/kvm support
-  lxc_config_set $LSTACK_NAME "lxc.cgroup.devices.allow = c 10:232 rwm"
-  HYPERVISOR=kvm
-else
-  warn "No KVM acceleration support detected, using QEMU (bad performance)."
-fi
+  info "Creating the LXC container"
+  lxc-create -n $LSTACK_NAME -t ubuntu -- \
+             -r trusty \
+             $__extra_args >/dev/null 2>&1 || {
+    error "Failed to create the container"
+    exit 1
+  }
 
-# /dev/net/tun support
-lxc_config_set $LSTACK_NAME "lxc.cgroup.devices.allow = c 10:200 rwm"
-lxc_config_set $LSTACK_NAME "lxc.cgroup.devices.allow = b 7:* rwm"
+  # Enable KVM support
+  if check_kvm_reqs; then
+    # /dev/kvm support
+    lxc_config_set $LSTACK_NAME "lxc.cgroup.devices.allow = c 10:232 rwm"
+    HYPERVISOR=kvm
+  else
+    warn "No KVM acceleration support detected, using QEMU (bad performance)."
+  fi
 
-# lvm support inside the container
-lxc_config_set $LSTACK_NAME "lxc.cgroup.devices.allow = c 10:236 rwm"
-lxc_config_set $LSTACK_NAME "lxc.cgroup.devices.allow = b 252:* rwm"
+  # /dev/net/tun support
+  lxc_config_set $LSTACK_NAME "lxc.cgroup.devices.allow = c 10:200 rwm"
+  lxc_config_set $LSTACK_NAME "lxc.cgroup.devices.allow = b 7:* rwm"
 
-# /dev/loop* for loop mounting
-lxc_config_set $LSTACK_NAME "lxc.cgroup.devices.allow = b 7:* rwm"
-lxc_config_set $LSTACK_NAME "lxc.cgroup.devices.allow = c 10:237 rwm"
+  # lvm support inside the container
+  lxc_config_set $LSTACK_NAME "lxc.cgroup.devices.allow = c 10:236 rwm"
+  lxc_config_set $LSTACK_NAME "lxc.cgroup.devices.allow = b 252:* rwm"
 
-lxc-start -n $LSTACK_NAME -d
+  # /dev/loop* for loop mounting
+  lxc_config_set $LSTACK_NAME "lxc.cgroup.devices.allow = b 7:* rwm"
+  lxc_config_set $LSTACK_NAME "lxc.cgroup.devices.allow = c 10:237 rwm"
 
-debug "Waiting for the container to get an IP..."
-wait_for_container_ip $LSTACK_NAME
+  lxc-start -n $LSTACK_NAME -d
 
-mkdir $LSTACK_ROOTFS/$LSTACK_NAME
-cp -r $BASE_PATH/ $LSTACK_ROOTFS/root/lstack
+  debug "Waiting for the container to get an IP..."
+  wait_for_container_ip $LSTACK_NAME
 
-# Disable KVM support if not available
-kvm_ok? || sed -i "s/^virt_type.*/virt_type = qemu/" \
-  $LSTACK_ROOTFS/root/lstack/configs/nova/nova*conf
+  mkdir $LSTACK_ROOTFS/$LSTACK_NAME
+  cp -r $BASE_PATH/ $LSTACK_ROOTFS/root/lstack
 
-info "Run 'tail -f $LSTACK_LOGFILE' to follow progress"
-info "Error messages go to $LSTACK_LOGFILE.errors"
-info "Proceeding with the install (takes from 3 to 10 min)..."
+  # Disable KVM support if not available
+  kvm_ok? || sed -i "s/^virt_type.*/virt_type = qemu/" \
+    $LSTACK_ROOTFS/root/lstack/configs/nova/nova*conf
 
-# Redirect stdout to log file
-mkdir -p $LSTACK_ROOTFS/var/lib/lstack/
+  info "Run 'tail -f $LSTACK_LOGFILE' to follow progress"
+  info "Error messages go to $LSTACK_LOGFILE.errors"
+  info "Proceeding with the install (takes from 3 to 10 min)..."
+
+  # Redirect stdout to log file
+  mkdir -p $LSTACK_ROOTFS/var/lib/lstack/
 cat > $LSTACK_ROOTFS/var/lib/lstack/metadata << EOH
 HYPERVISOR=$HYPERVISOR
 VGNAME=$LSTACK_NAME-vg
 EOH
 
-# Add the SSH public key to the container so we can SSH into it
-mkdir -p $LSTACK_ROOTFS/root/.ssh
-chmod 0700 $LSTACK_ROOTFS/root/.ssh
-cp $LSTACK_CONF_DIR/sshkey.pub $LSTACK_ROOTFS/root/.ssh/authorized_keys
+  # Add the SSH public key to the container so we can SSH into it
+  mkdir -p $LSTACK_ROOTFS/root/.ssh
+  chmod 0700 $LSTACK_ROOTFS/root/.ssh
+  cp $LSTACK_CONF_DIR/sshkey.pub $LSTACK_ROOTFS/root/.ssh/authorized_keys
 
-if [ -n "$LSTACK_QUIET" ] || [ -n "$LSTACK_NONYANCAT" ]; then
-  install
-else
-  install &
-  source $BASE_PATH/nyancat.sh $!
-fi
+  if [ -n "$LSTACK_QUIET" ] || [ -n "$LSTACK_NONYANCAT" ]; then
+    install
+  else
+    install &
+    source $BASE_PATH/nyancat.sh $!
+  fi
+
+}
+
+
+usage() {
+  echo
+  echo "Usage: lstack bootstrap [options]"
+  echo
+  echo FLAGS
+  echo
+  columnize "--release",      "OpenStack release (default: Juno)"
+  columnize "--force",        "Destroy the container first if it already exists"
+  echo
+}
+
+importimg_option_release()   (
+  case $1 in
+    juno)
+      ;;
+    icehouse)
+      ;;
+    *)
+      error "OpenStack release '$1' not supported."
+      exit 1
+      ;;
+  esac
+  export LSTACK_OSRELEASE=$1; shift; d "$@"
+)
+importimg_option_help()      ( usage; )
+importimg_command_help()     ( usage; )
+importimg_ () ( main )
+
+d() {
+  # Assume there are no flags if there's only one argument
+  if [ $# = 1 ]; then
+    main $@
+  else
+    dispatch importimg "$@"
+  fi
+}
+
+dispatch importimg "$@"

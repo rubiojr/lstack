@@ -36,8 +36,8 @@ dispatch ()
 
 	# Exit and warn if no first argument is found
 	if [ -z "$arg" ]; then
-		"${namespace}_" # Call empty call placeholder
-		return 1
+    # Call empty call placeholder
+    "${namespace}_"
 	fi
 
 	shift 2 # Remove namespace and first argument from $@

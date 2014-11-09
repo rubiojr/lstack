@@ -122,6 +122,7 @@ main() {
 cat > $LSTACK_ROOTFS/var/lib/lstack/metadata << EOH
 HYPERVISOR=$HYPERVISOR
 VGNAME=$LSTACK_NAME-vg
+LSTACK_OSRELEASE=$LSTACK_OSRELEASE
 EOH
 
   # Add the SSH public key to the container so we can SSH into it

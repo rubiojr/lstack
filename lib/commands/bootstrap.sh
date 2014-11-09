@@ -162,7 +162,7 @@ bootstrap_option_release()   (
       exit 1
       ;;
   esac
-  export LSTACK_OSRELEASE=$1; shift; dispatch "$@"
+  export LSTACK_OSRELEASE=$1; shift; dispatch bootstrap "$@"
 )
 bootstrap_option_help()      ( usage; )
 bootstrap_option_force()     ( export bootstrap_force=1; dispatch bootstrap "$@" )

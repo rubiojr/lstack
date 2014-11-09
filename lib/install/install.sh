@@ -129,8 +129,8 @@ cp $BASE_PATH/../configs/cinder/* /etc/cinder/
 sed -i "s/cinder-volumes/$VGNAME/g" /etc/cinder/cinder.conf
 rm /var/lib/cinder/cinder.sqlite
 cinder-manage db sync
-cd /etc/init.d/; for i in $( ls cinder-* ); do
-  service $i restart; cd /root/;
+cd /etc/init/; for i in $( ls cinder-* ); do
+  service `basename $i .conf` restart
 done
 
 #
@@ -153,10 +153,14 @@ virsh net-undefine default
 cp $BASE_PATH/../configs/default/* /etc/default/
 cp $BASE_PATH/../configs/nova/* /etc/nova/
 service dbus restart && service libvirt-bin restart
-for f in /etc/init.d/nova-*; do $f restart; done
 rm -f /var/lib/nova/nova.sqlite
+cd /etc/init/; for i in $( ls nova-* ); do
+  service `basename $i .conf` restart
+done
 nova-manage db sync
-for f in /etc/init.d/nova-*; do $f restart; done
+cd /etc/init/; for i in $( ls nova-* ); do
+  service `basename $i .conf` restart
+done
 nova-manage --config-file /etc/nova/nova.conf network create private 10.0.254.0/24 1 256
 
 info "Creating a cirros 0.3 instance. user: cirros, password: cubswin:)"

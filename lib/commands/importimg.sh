@@ -42,6 +42,7 @@ main() {
   __gid=$(glance_import "$image" "$importimg_name")
   if [ -z "$__gid " ]; then
     error "Error importing the image"
+    exit 1
   fi
 
   __gmd5=$(glance_md5 "$__gid")

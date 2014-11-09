@@ -112,6 +112,13 @@ vgcreate $VGNAME $loopdev || {
   exit 1
 }
 
+# create the dm devices, required when using a Trusty container but
+# not with Precise for some reason
+for i in 0 1 2 3 4 5 6 8 9 10; do
+  mknod /dev/dm-$i b 252 $i
+done
+chgrp disk /dev/dm-*
+
 lvcreate --name disk1 --size 10G $VGNAME
 lvcreate --name disk2 --size 10G $VGNAME
 lvcreate --name disk3 --size 10G $VGNAME

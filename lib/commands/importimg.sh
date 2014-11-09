@@ -10,10 +10,7 @@ source $BASE_PATH/install/creds.sh
 main() {
   local image=$1
 
-  running? || {
-    error "The container isn't running. Run 'lstack bootstrap' first."
-    exit 1
-  }
+  running? || exit $?
 
   if [ ! -f "$image" ]; then
     error "Invalid image file '$image'."

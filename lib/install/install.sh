@@ -11,6 +11,8 @@ HYPERVISOR=${HYPERVISOR:-qemu}
 
 apt-get update
 apt-get install -y software-properties-common openssh-server curl
+sudo add-apt-repository -y cloud-archive:juno
+apt-get update
 apt-get dist-upgrade -y
 
 # FIXME

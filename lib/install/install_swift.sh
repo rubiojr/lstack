@@ -10,6 +10,7 @@ set -e
 
 DIR=/srv/swift
 BASE_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source $BASE_PATH/../lstack.sh
 
 info "Setting up swift"
 

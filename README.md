@@ -88,7 +88,6 @@ TCP connections to the ports 22 and 443 of container will be forwarded to the 't
 
 ## Future plans
 
-* OpenStack Juno support using Ubuntu Trusty containers.
 * Adding OpenStack Swift.
 * Volume support for instances (no longer working after Juno).
 * Maybe Neutron replacing legacy Nova network if that's possible at all.

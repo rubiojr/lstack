@@ -51,6 +51,10 @@ apt-get install -y python-mysqldb mysql-server rabbitmq-server \
 
 update-guestfs-appliance
 
+# Tweak MySQL max_connections
+sed -i s/#max_connections.*/max_connections\ =\ 200/ /etc/mysql/my.cnf
+service mysql restart
+
 info "Populating the database"
 $BASE_PATH/populatedb.sh
 #

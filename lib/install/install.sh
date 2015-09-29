@@ -144,7 +144,7 @@ info "Setting up Nova"
 mkdir /dev/net
 mknod /dev/net/tun c 10 200
 
-if [ "$HYPERVISOR" = "kvm" ]; then
+if [ "$HYPERVISOR" = "kvm" ] && [ ! -f /dev/kvm ]; then
   # KVM support
   mknod /dev/kvm c 10 232
   chmod g+rw /dev/kvm
@@ -173,3 +173,6 @@ nova flavor-create --is-public true m1.pico auto 64 0 1
 nova flavor-create --is-public true m1.nano auto 128 0 1
 nova flavor-create --is-public true m1.micro auto 256 0 1
 nova boot --image cirros0.3 --flavor m1.pico test
+
+## Install openstack swift
+$BASE_PATH/install_swift.sh

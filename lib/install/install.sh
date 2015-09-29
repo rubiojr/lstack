@@ -59,6 +59,7 @@ $BASE_PATH/populatedb.sh
 info "Setting up keystone"
 cp $BASE_PATH/../configs/keystone/* /etc/keystone/
 rm -f /var/lib/keystone/keystone.db
+chown keystone:keystone -R /var/log/keystone
 service keystone restart
 keystone-manage db_sync
 
@@ -144,7 +145,7 @@ info "Setting up Nova"
 mkdir /dev/net
 mknod /dev/net/tun c 10 200
 
-if [ "$HYPERVISOR" = "kvm" ] && [ ! -f /dev/kvm ]; then
+if [ "$HYPERVISOR" = "kvm" ] && [ ! -c /dev/kvm ]; then
   # KVM support
   mknod /dev/kvm c 10 232
   chmod g+rw /dev/kvm

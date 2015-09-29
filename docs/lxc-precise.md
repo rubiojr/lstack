@@ -17,3 +17,5 @@ $ sudo apt-get install lxc
 ```
 
 That should install LXC version `1.0.6` or greater that is supported by lstack.
+
+If you're installing `lxc >= 1.1` make sure you also install the `lxc-templates` package.

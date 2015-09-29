@@ -5,7 +5,7 @@ load test_helper
 }
 
 @test "glance command works" {
-  lstack glance index
+  lstack glance image-list || lstack glance index
 }
 
 @test "keystone command works" {

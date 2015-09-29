@@ -8,13 +8,13 @@ See the [GETTING STARTED](/docs/getting-started.md) guide.
 
 ## Description
 
-Creates an LXC container and installs OpenStack Icehouse from the Ubuntu Cloud Archive. Services currently supported:
+Creates an LXC container and installs OpenStack Juno from the Ubuntu Cloud Archive. Services currently supported:
 
 * Nova Compute (kvm)
-* Cinder (using BlockDeviceDriver)
 * Keystone
 * Nova Network (flat topology)
 * Glance
+* Swift
 
 ## Usage
 
@@ -84,13 +84,13 @@ TCP connections to the ports 22 and 443 of container will be forwarded to the 't
 
 * Neutron is not supported right now. I'm using a flat network with nova-network.
 * Provisioning time usually takes between 3 and 10 minutes. A fast download pipe (or an APT cache) and a speedy SSD should do it in ~3 minutes.
-* Cinder is configured to use BlockDeviceDriver. More on this later.
+* Cinder is installed but not working currently.
 
 ## Future plans
 
 * OpenStack Juno support using Ubuntu Trusty containers.
 * Adding OpenStack Swift.
-* Better block device support for Cinder, currently limited to 5 volumes.
+* Volume support for instances (no longer working after Juno).
 * Maybe Neutron replacing legacy Nova network if that's possible at all.
 
 See the [TODO](TODO.md) list.

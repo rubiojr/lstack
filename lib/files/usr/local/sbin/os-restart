@@ -1,0 +1,14 @@
+#!/bin/bash
+set -e
+
+if [ `whoami` != "root" ]; then
+  >&2 echo "Root required."
+  exit 1
+fi
+
+if [[ ! "$1" =~ ^(nova|cinder|glance|keystone|swift)$ ]]; then
+  >&2 echo "Invalid OpenStack service. Use either nova, cinder, glance or keystone."
+  exit 1
+fi
+
+for f in /etc/init/$1-*; do service $(basename $f .conf) restart; done

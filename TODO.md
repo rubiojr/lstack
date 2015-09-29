@@ -2,7 +2,6 @@
 
 ## 1.0
 
-* Support both Juno and Icehouse releases
 * Add self-test and diagnostics commands
 
 ## Future
@@ -12,7 +11,6 @@
   * How do we manage LVM volume: http://askubuntu.com/questions/376345/allow-loop-mounting-files-inside-lxc-containers
   * Architecture
 
-* Swift support.
 * Neutron support?.
 * Unprivileged containers?.
 * Custom name for the container (hardcoded to lstack-username now).

@@ -11,6 +11,10 @@ HYPERVISOR=${HYPERVISOR:-qemu}
 
 apt-get update
 apt-get install -y software-properties-common openssh-server curl
+if [ "$LSTACK_OSRELEASE" = "juno" ]; then
+  sudo add-apt-repository -y cloud-archive:juno
+  apt-get update
+fi
 apt-get dist-upgrade -y
 
 # FIXME
@@ -24,7 +28,7 @@ apt-get install -y open-iscsi || {
   apt-get install -y open-iscsi
 }
 
-info "Installing OpenStack Icehouse"
+info "Installing OpenStack"
 # nova-compute upstart config tries to modprobe nbd and that doesn't
 # work inside LXC: http://askubuntu.com/a/402433
 apt-get install -y nova-compute || {
@@ -47,6 +51,12 @@ apt-get install -y python-mysqldb mysql-server rabbitmq-server \
 
 update-guestfs-appliance
 
+cp $BASE_PATH/../files/usr/local/sbin/* /usr/local/sbin/
+
+# Tweak MySQL max_connections
+sed -i s/#max_connections.*/max_connections\ =\ 200/ /etc/mysql/my.cnf
+service mysql restart
+
 info "Populating the database"
 $BASE_PATH/populatedb.sh
 #
@@ -55,7 +65,9 @@ $BASE_PATH/populatedb.sh
 info "Setting up keystone"
 cp $BASE_PATH/../configs/keystone/* /etc/keystone/
 rm -f /var/lib/keystone/keystone.db
-service keystone restart
+service keystone stop
+chown keystone:keystone -R /var/log/keystone
+service keystone start
 keystone-manage db_sync
 
 $BASE_PATH/keystone_basic.sh
@@ -140,7 +152,7 @@ info "Setting up Nova"
 mkdir /dev/net
 mknod /dev/net/tun c 10 200
 
-if [ "$HYPERVISOR" = "kvm" ]; then
+if [ "$HYPERVISOR" = "kvm" ] && [ ! -c /dev/kvm ]; then
   # KVM support
   mknod /dev/kvm c 10 232
   chmod g+rw /dev/kvm
@@ -169,3 +181,6 @@ nova flavor-create --is-public true m1.pico auto 64 0 1
 nova flavor-create --is-public true m1.nano auto 128 0 1
 nova flavor-create --is-public true m1.micro auto 256 0 1
 nova boot --image cirros0.3 --flavor m1.pico test
+
+## Install openstack swift
+$BASE_PATH/install_swift.sh

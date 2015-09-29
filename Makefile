@@ -38,6 +38,7 @@ test:
 		 test/ip.bat \
 		 test/ssh.bat \
 		 test/ostack_commands.bat \
+		 test/swift.bat \
 		 test/destroy.bat
 
 .PHONY: test

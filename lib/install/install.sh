@@ -51,6 +51,8 @@ apt-get install -y python-mysqldb mysql-server rabbitmq-server \
 
 update-guestfs-appliance
 
+cp $BASE_PATH/../files/usr/local/sbin/* /usr/local/sbin/
+
 # Tweak MySQL max_connections
 sed -i s/#max_connections.*/max_connections\ =\ 200/ /etc/mysql/my.cnf
 service mysql restart

@@ -24,6 +24,11 @@ main(){
   info "Importing the image (may take some time)..."
   local gid=$(glance_import "$deploy_file" "$image_name")
 
+  if [ -z "$gid" ]; then
+    error "Failed to import image into Glance."
+    exit 1
+  fi
+
   info "Deploying $deploy_name..."
   info "Instance name:   $deploy_name"
   info "Instance flavor: $deploy_flavor"

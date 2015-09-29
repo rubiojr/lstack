@@ -59,8 +59,9 @@ $BASE_PATH/populatedb.sh
 info "Setting up keystone"
 cp $BASE_PATH/../configs/keystone/* /etc/keystone/
 rm -f /var/lib/keystone/keystone.db
+service keystone stop
 chown keystone:keystone -R /var/log/keystone
-service keystone restart
+service keystone start
 keystone-manage db_sync
 
 $BASE_PATH/keystone_basic.sh

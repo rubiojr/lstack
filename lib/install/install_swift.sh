@@ -9,41 +9,16 @@
 set -e
 
 DIR=/srv/swift
+BASE_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-[ `id -u` = 0 ] || {
-    echo "You need to run this script as root" >&2
-    exit 1
-}
+info "Setting up swift"
 
 apt-get install -y python-swiftclient memcached swift swift-account swift-container swift-object swift-proxy
 mkdir -p $DIR/1
 chown -R swift:swift $DIR
 
 cd /etc/swift
-cat <<EOF | tee proxy-server.conf
-[DEFAULT]
-bind_port = 8080
-log_facility = LOG_LOCAL1
-
-[pipeline:main]
-pipeline = healthcheck cache tempauth proxy-server
-
-[app:proxy-server]
-use = egg:swift#proxy
-allow_account_management = true
-account_autocreate = true
-
-[filter:tempauth]
-use = egg:swift#tempauth
-user_admin_admin = admin .admin .reseller_admin
-user_testproj_testuser = testpwd .admin
-
-[filter:healthcheck]
-use = egg:swift#healthcheck
-
-[filter:cache]
-use = egg:swift#memcache
-EOF
+cp $BASE_PATH/../configs/swift/* /etc/swift/
 
 cat <<EOF | tee swift.conf
 [swift-hash]
@@ -54,10 +29,10 @@ EOF
 /bin/echo -e '\n[container-sync]' >> container-server.conf
 
 # add devices and ports to configuration and create rings
-for i in "object 6010" "account 6020" "container 6030"; do
+for i in "object 6000" "container 6001" "account 6002"; do
     what=${i% *}
     port=${i#* }
-    sed -i "/\[DEFAULT\]/ a devices = $DIR\nmount_check = false\nbind_port = $port" ${what}-server.conf
+    sed -i "/\[DEFAULT\]/ a devices = $DIR\nmount_check = false" ${what}-server.conf
 
    swift-ring-builder ${what}.builder create 18 3 1
    swift-ring-builder ${what}.builder add z1-127.0.0.1:$port/1 1
@@ -65,11 +40,10 @@ for i in "object 6010" "account 6020" "container 6030"; do
 done
 
 # exits with 1 even if everything succeeded
+service swift-proxy start || true
+service swift-container start || true
+service swift-account start || true
+service swift-object start || true
 swift-init restart all || true
 
-# create user account
-cat <<EOF
-Now check that it works with
-
-    swift -A http://127.0.0.1:8080/auth/v1.0 -U testproj:testuser -K testpwd stat -v
-EOF
+swift --os-auth-url http://127.0.0.1:5000/v2.0/ -U admin:admin -K Seguridad101 stat -v

@@ -26,6 +26,7 @@ main() {
   need_pkg "sudo"
   # 1.0.6 or greater required
   need_pkg "lxc" "1.0.1"
+  need_pkg "debootstrap"
   need_pkg "qemu-kvm"
 
   dispatch lstack "$@"

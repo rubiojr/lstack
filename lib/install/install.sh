@@ -28,7 +28,7 @@ apt-get install -y open-iscsi || {
   apt-get install -y open-iscsi
 }
 
-info "Installing OpenStack Icehouse"
+info "Installing OpenStack"
 # nova-compute upstart config tries to modprobe nbd and that doesn't
 # work inside LXC: http://askubuntu.com/a/402433
 apt-get install -y nova-compute || {

@@ -18,7 +18,7 @@ $ sudo lstack deploy --name trusty \
 
 The deploy command is equivalent to:
 * Creating the lstack container (if not created already).
-* Bootstrap OpenStack Icehouse on it.
+* Bootstrap OpenStack Juno on it.
 * Import the trusty image into Glance.
 
 ## The long way

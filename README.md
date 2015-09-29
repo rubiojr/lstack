@@ -8,12 +8,13 @@ See the [GETTING STARTED](/docs/getting-started.md) guide.
 
 ## Description
 
-Creates an LXC container and installs OpenStack Icehouse from the Ubuntu Cloud Archive. Services currently supported:
+Creates an LXC container and installs OpenStack Juno from the Ubuntu Cloud Archive. Services currently supported:
 
 * Nova Compute (kvm)
 * Keystone
 * Nova Network (flat topology)
 * Glance
+* Swift
 
 ## Usage
 

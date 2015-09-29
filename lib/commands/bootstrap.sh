@@ -148,17 +148,11 @@ usage() {
 
 bootstrap_option_release()   (
   case $1 in
-    '')
-      error "Missing release name: juno, icehouse"
-      exit 1
-      ;;
     juno)
-      ;;
-    icehouse)
       ;;
     *)
       error "OpenStack release '$1' not supported"
-      error "Currently supported releases: icehouse, juno"
+      error "Currently supported releases: juno"
       exit 1
       ;;
   esac
